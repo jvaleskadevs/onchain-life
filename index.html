@@ -807,13 +807,11 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        body: {
-                            target_address: addr,
-                            from_address: currentAccount,
-                            call_data: callDataBytes,
-                            value: '0x0',
-                            block_height: Number(blockNumber),
-                        }
+                      target_address: addr,
+                      from_address: currentAccount,
+                      call_data: callDataBytes,
+                      value: '0x0',
+                      block_height: Number(blockNumber)
                     }),
                 });
                 
