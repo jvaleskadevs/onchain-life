@@ -297,7 +297,7 @@
                 <div id="walletDiv" class="wallet-row">
                     <button class="wallet-btn" onclick="promptConnect()">CONNECT WALLET</button>
                 </div>
-                <div id="status" class="status">Loading libraries...</div>
+                <div id="status" class="status"></div>
             </div>
         </div>
         
@@ -309,14 +309,16 @@
                         <option value="1">Ethereum</option>
                         <option value="11155111">Sepolia</option>
                     </select>
-                    <span class="chain-label">Chain for reading (click LOAD STATE after switching)</span>
+                    <!--<span class="chain-label">Chain for reading (click LOAD STATE after switching)</span>-->
                 </div>
+                <input type="text" id="contractAddr" placeholder="Onchain Life contract address" value="0xC4b84a3b3eA27d6899DEdE405d838533C780B3C8" oninput="onContractInput()">
+                <!--
                 <div class="rpc-input">
                     <label>Custom RPC URL (optional - uses publicnode.com if empty)</label>
                     <input type="text" id="rpcUrl" placeholder="https://..." oninput="validateRpc()">
                     <div id="rpcError" class="rpc-error">Invalid URL - must start with http:// or https://</div>
                 </div>
-                <input type="text" id="contractAddr" placeholder="0xC4b84a3b3eA27d6899DEdE405d838533C780B3C8" oninput="onContractInput()">
+                -->
                 
                 <div id="gasEstimate" class="gas-estimate hidden">
                     <div class="gas-row">
@@ -347,7 +349,7 @@
                     <button onclick="stepContract()" id="btnStep" class="danger">CALL STEP()</button>
                     <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
                     <button onclick="estimateStepGas()" id="btnEstimate" disabled>ESTIMATE GAS</button>
-                    <button onclick="toggleGasKillerConfig()" class="wallet-btn small">⚙️ Gas Killer Config</button>
+                    <!--<button onclick="toggleGasKillerConfig()" class="wallet-btn small">⚙️ Gas Killer Config</button>-->
                 </div>
             </div>
         </div>
@@ -358,8 +360,8 @@
                     <button onclick="stepLocal()">STEP +1</button>
                     <button onclick="toggleAutoStep()" id="btnAuto">AUTO PLAY</button>
                     <button onclick="loadGlider()">GLIDER</button>
-                    <button onclick="clearGrid()">CLEAR</button>
                     <button onclick="randomize()">RANDOM</button>
+                    <button onclick="clearGrid()">CLEAR</button>
                 </div>
                 <canvas id="grid" width="512" height="512"></canvas>
                 <div class="stats">
@@ -509,7 +511,7 @@
                 return false;
             }
         }
-        
+        /*
         function validateRpc() {
             const input = document.getElementById('rpcUrl');
             const error = document.getElementById('rpcError');
@@ -522,12 +524,13 @@
                 error.style.display = 'none';
                 input.style.borderColor = value ? '#00ff41' : '#003b00';
             }
-        }
-        
+        }*/
+        /*
         function toggleGasKillerConfig() {
             const config = document.getElementById('gasKillerConfig');
             config.classList.toggle('visible');
         }
+        */
         
         function createPublicClientForChain(chainId) {
             const chain = getChainById(chainId);
@@ -1432,7 +1435,7 @@
         window.validateRpc = validateRpc;
         window.onContractInput = onContractInput;
         window.estimateStepGas = estimateStepGas;
-        window.toggleGasKillerConfig = toggleGasKillerConfig;
+        //window.toggleGasKillerConfig = toggleGasKillerConfig;
         window.toggleAutoStep = toggleAutoStep;
         window.startAutoStep = startAutoStep;
         window.stopAutoStep = stopAutoStep;
