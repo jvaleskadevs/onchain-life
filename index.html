@@ -104,8 +104,8 @@
             box-shadow: 0 0 10px #ff0040;
         }
         button:disabled.danger {
-            border-color: #550000;
-            color: #550000;
+            border-color: #ee0040;
+            color: #ee0040;
         }
         button.alt {
             border-color: #ffaa00;
@@ -117,7 +117,8 @@
             box-shadow: 0 0 10px #ffaa00;
         }
         .status {
-            margin-top: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
             padding: 10px;
             border-left: 3px solid #003b00;
             background: #000;
@@ -295,9 +296,8 @@
         <div class="box" data-title="Wallet">
             <div class="box-content">
                 <div id="walletDiv" class="wallet-row">
-                    <button class="wallet-btn" onclick="promptConnect()">CONNECT WALLET</button>
+                    <button class="wallet-btn" onclick="promptConnect()">CONNECT</button>
                 </div>
-                <div id="status" class="status"></div>
             </div>
         </div>
         
@@ -305,8 +305,8 @@
             <div class="box-content">
                 <div class="chain-row">
                     <select id="chainSelect" onchange="switchChain()">
-                        <option value="8453">Base</option>
-                        <option value="1">Ethereum</option>
+                        <option value="8453" disabled>Base</option>
+                        <option value="1" disabled>Ethereum</option>
                         <option value="11155111">Sepolia</option>
                     </select>
                     <!--<span class="chain-label">Chain for reading (click LOAD STATE after switching)</span>-->
@@ -320,6 +320,23 @@
                 </div>
                 -->
                 
+                <!--
+                <div id="gasKillerConfig" class="gas-killer-config">
+                    <label>Gas Killer Router URL</label>
+                    <input type="text" id="routerUrl" placeholder="https://router.gaskiller.io" value="">
+                    <label>API Key</label>
+                    <input type="password" id="apiKey" placeholder="your-api-key">
+                </div>
+                -->
+                
+                <div class="button-row">
+                    <button onclick="loadFromContract()" id="btnLoad">LOAD STATE</button>
+                    <button onclick="stepContract()" id="btnStep" class="danger" disabled>CALL STEP()</button>
+                    <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
+                    <button onclick="estimateStepGas()" id="btnEstimate">ESTIMATE GAS</button>
+                    <!--<button onclick="toggleGasKillerConfig()" class="wallet-btn small">⚙️ Gas Killer Config</button>-->
+                </div>
+
                 <div id="gasEstimate" class="gas-estimate hidden">
                     <div class="gas-row">
                         <span class="gas-label">Estimated Gas:</span>
@@ -335,30 +352,16 @@
                     </div>
                     <div id="gasNote" class="gas-note hidden"></div>
                 </div>
-                <!--
-                <div id="gasKillerConfig" class="gas-killer-config">
-                    <label>Gas Killer Router URL</label>
-                    <input type="text" id="routerUrl" placeholder="https://router.gaskiller.io" value="">
-                    <label>API Key</label>
-                    <input type="password" id="apiKey" placeholder="your-api-key">
-                </div>
-                -->
-                
-                <div class="button-row">
-                    <button onclick="loadFromContract()" id="btnLoad" disabled>LOAD STATE</button>
-                    <button onclick="stepContract()" id="btnStep" class="danger">CALL STEP()</button>
-                    <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
-                    <button onclick="estimateStepGas()" id="btnEstimate" disabled>ESTIMATE GAS</button>
-                    <!--<button onclick="toggleGasKillerConfig()" class="wallet-btn small">⚙️ Gas Killer Config</button>-->
-                </div>
             </div>
         </div>
+
+        <div id="status" class="status">Ready - Connect your wallet to start</div>
         
         <div class="box" data-title="Grid Simulation">
             <div class="box-content">
                 <div style="text-align: center; margin-bottom: 10px;">
                     <button onclick="stepLocal()">STEP +1</button>
-                    <button onclick="toggleAutoStep()" id="btnAuto">AUTO PLAY</button>
+                    <button onclick="toggleAutoStep()" id="btnAuto">PLAY</button>
                     <button onclick="loadGlider()">GLIDER</button>
                     <button onclick="randomize()">RANDOM</button>
                     <button onclick="clearGrid()">CLEAR</button>
@@ -375,7 +378,7 @@
                     </div>
                     <div class="stat">
                         <div class="stat-value" id="chainDisplay">-</div>
-                        <div class="stat-label">On-chain</div>
+                        <div class="stat-label">Onchain</div>
                     </div>
                 </div>
             </div>
@@ -534,9 +537,9 @@
         
         function createPublicClientForChain(chainId) {
             const chain = getChainById(chainId);
-            const customRpc = document.getElementById('rpcUrl').value.trim();
+            //const customRpc = document.getElementById('rpcUrl').value.trim();
             // Only use custom RPC if it's a valid URL
-            const rpcUrl = isValidUrl(customRpc) ? customRpc : PUBLIC_RPCS[chainId];
+            const rpcUrl = /*isValidUrl(customRpc) ? customRpc :*/ PUBLIC_RPCS[chainId];
             
             return window.viem.createPublicClient({
                 chain: chain,
@@ -1363,7 +1366,7 @@
             clearInterval(autoStepInterval);
             autoStepInterval = null;
             
-            document.getElementById('btnAuto').textContent = 'AUTO PLAY';
+            document.getElementById('btnAuto').textContent = 'PLAY';
             document.getElementById('btnAuto').style.borderColor = '#00ff41';
             document.getElementById('btnAuto').style.color = '#00ff41';
         }
@@ -1432,7 +1435,7 @@
         window.clearGrid = clearGrid;
         window.randomize = randomize;
         window.switchChain = switchChain;
-        window.validateRpc = validateRpc;
+        //window.validateRpc = validateRpc;
         window.onContractInput = onContractInput;
         window.estimateStepGas = estimateStepGas;
         //window.toggleGasKillerConfig = toggleGasKillerConfig;
