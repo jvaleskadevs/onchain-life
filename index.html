@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onchain Life</title>
+    <title>OnchainLife NFT</title>
     <script type="module">
         import { createPublicClient, createWalletClient, custom, http, parseEther, formatEther, encodeFunctionData } from 'https://esm.sh/viem@2.21.0';
         import { mainnet, base, sepolia } from 'https://esm.sh/viem@2.21.0/chains';
@@ -17,20 +17,20 @@
         background: #050505;
         color: #00ff41;
         min-height: 100vh;
-        padding: 10px; /* Reduced from 20px for mobile */
+        padding: 10px;
         line-height: 1.6;
-        overflow-x: hidden; /* Prevent horizontal scroll */
+        overflow-x: hidden;
     }
     .container { 
         max-width: 900px; 
         margin: 0 auto;
-        width: 100%; /* Ensure it doesn't overflow */
+        width: 100%;
     }
     h1 { 
         text-align: center; 
         margin-bottom: 10px;
         text-shadow: 0 0 10px #00ff41;
-        font-size: 1.5rem; /* Slightly smaller for mobile */
+        font-size: 1.5rem;
     }
     @media (min-width: 640px) {
         h1 { font-size: 2rem; }
@@ -41,7 +41,7 @@
         color: #008f11; 
         margin-bottom: 20px;
         font-size: 0.8rem;
-        word-break: break-word; /* Prevent overflow */
+        word-break: break-word;
     }
     @media (min-width: 640px) {
         .subtitle { font-size: 0.9rem; margin-bottom: 30px; }
@@ -49,7 +49,7 @@
     .box {
         border: 1px solid #003b00;
         background: #0a0a0a;
-        margin-bottom: 15px; /* Reduced for mobile */
+        margin-bottom: 15px;
         position: relative;
         width: 100%;
     }
@@ -59,18 +59,18 @@
     .box::before {
         content: attr(data-title);
         position: absolute;
-        top: -8px; /* Adjusted for mobile */
+        top: -8px;
         left: 10px;
         background: #050505;
         color: #00ff41;
         padding: 0 8px;
-        font-size: 0.7rem; /* Smaller on mobile */
+        font-size: 0.7rem;
         text-transform: uppercase;
     }
     @media (min-width: 640px) {
         .box::before { top: -10px; font-size: 0.8rem; padding: 0 10px; }
     }
-    .box-content { padding: 15px; } /* Reduced from 20px */
+    .box-content { padding: 15px; }
     @media (min-width: 640px) {
         .box-content { padding: 20px; }
     }
@@ -78,13 +78,13 @@
         background: #000;
         border: 1px solid #003b00;
         color: #00ff41;
-        padding: 8px; /* Slightly smaller for mobile */
+        padding: 8px;
         font-family: inherit;
-        font-size: 16px; /* Prevent iOS zoom on focus */
+        font-size: 16px;
         margin-bottom: 10px;
         width: 100%;
-        border-radius: 0; /* Remove iOS default styling */
-        -webkit-appearance: none; /* Remove iOS default styling */
+        border-radius: 0;
+        -webkit-appearance: none;
     }
     @media (min-width: 640px) {
         input, select { padding: 10px; font-size: 0.9rem; }
@@ -98,26 +98,26 @@
         margin-top: 15px;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px; /* Increased slightly for touch */
+        gap: 8px;
     }
     button {
         background: #001100;
         border: 1px solid #00ff41;
         color: #00ff41;
-        padding: 12px 16px; /* Larger touch targets for mobile */
+        padding: 12px 16px;
         font-family: inherit;
         font-size: 0.85rem;
         cursor: pointer;
         transition: all 0.2s;
-        flex: 1; /* Allow buttons to grow */
-        min-width: 80px; /* Prevent too small buttons */
-        min-height: 44px; /* iOS recommended minimum touch target */
+        flex: 1;
+        min-width: 80px;
+        min-height: 44px;
     }
     @media (min-width: 640px) {
         button { 
             padding: 10px 20px; 
             font-size: 0.9rem;
-            flex: 0 1 auto; /* Don't grow on desktop */
+            flex: 0 1 auto;
         }
     }
     button:hover:not(:disabled) {
@@ -149,14 +149,32 @@
         color: #000;
         box-shadow: 0 0 10px #ffaa00;
     }
+    button.mint {
+        border-color: #00aaff;
+        color: #00aaff;
+    }
+    button.mint:hover:not(:disabled) {
+        background: #00aaff;
+        color: #000;
+        box-shadow: 0 0 10px #00aaff;
+    }
+    button.approve {
+        border-color: #ff00ff;
+        color: #ff00ff;
+    }
+    button.approve:hover:not(:disabled) {
+        background: #ff00ff;
+        color: #000;
+        box-shadow: 0 0 10px #ff00ff;
+    }
     .status {
-        margin: 15px 0; /* Reduced margins */
+        margin: 15px 0;
         padding: 12px;
         border-left: 3px solid #003b00;
         background: #000;
         font-size: 0.85rem;
         min-height: 40px;
-        word-break: break-word; /* Prevent overflow */
+        word-break: break-word;
     }
     @media (min-width: 640px) {
         .status { margin: 20px 0; padding: 10px; }
@@ -166,37 +184,36 @@
     .status.pending { border-left-color: #ffaa00; color: #ffaa00; }
     .status.warning { border-left-color: #ffaa00; color: #ffaa00; }
 
-    /* RESPONSIVE CANVAS - This is the critical fix */
     canvas {
         display: block;
         margin: 15px auto;
         border: 1px solid #003b00;
         image-rendering: pixelated;
-        width: 100%; /* Scale to container */
-        max-width: 512px; /* But don't exceed original size */
-        height: auto; /* Maintain aspect ratio */
-        aspect-ratio: 1 / 1; /* Keep it square */
+        width: 100%;
+        max-width: 512px;
+        height: auto;
+        aspect-ratio: 1 / 1;
     }
 
     .stats {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px; /* Reduced for mobile */
+        gap: 8px;
         margin-top: 15px;
     }
     .stat {
         border: 1px solid #003b00;
-        padding: 8px; /* Reduced for mobile */
+        padding: 8px;
         text-align: center;
         background: #000;
-        min-width: 0; /* Prevent overflow */
-        overflow: hidden; /* Prevent text overflow */
+        min-width: 0;
+        overflow: hidden;
     }
     @media (min-width: 640px) {
         .stat { padding: 10px; }
     }
     .stat-value {
-        font-size: 1.2rem; /* Smaller on mobile */
+        font-size: 1.2rem;
         color: #00ff41;
         text-shadow: 0 0 5px #00ff41;
         word-break: break-word;
@@ -205,7 +222,7 @@
         .stat-value { font-size: 1.5rem; }
     }
     .stat-label {
-        font-size: 0.6rem; /* Smaller on mobile */
+        font-size: 0.6rem;
         color: #008f11;
         text-transform: uppercase;
         word-break: break-word;
@@ -220,7 +237,7 @@
         flex-wrap: wrap;
     }
     .wallet-btn {
-        padding: 8px 12px; /* Larger touch target */
+        padding: 8px 12px;
         font-size: 0.85rem;
         min-height: 44px;
     }
@@ -237,7 +254,7 @@
         align-items: center;
         gap: 10px;
         font-size: 0.85rem;
-        flex-wrap: wrap; /* Allow wrapping on mobile */
+        flex-wrap: wrap;
     }
     @media (min-width: 640px) {
         .connected { font-size: 0.9rem; }
@@ -249,7 +266,7 @@
         border-radius: 50%;
         box-shadow: 0 0 5px #00ff41;
         animation: pulse 2s infinite;
-        flex-shrink: 0; /* Don't shrink on mobile */
+        flex-shrink: 0;
     }
     @keyframes pulse {
         0%, 100% { opacity: 1; }
@@ -260,33 +277,14 @@
         gap: 10px;
         align-items: center;
         margin-bottom: 10px;
-        flex-wrap: wrap; /* Allow wrapping */
+        flex-wrap: wrap;
     }
     .chain-label {
         color: #008f11;
-        font-size: 0.75rem; /* Smaller on mobile */
+        font-size: 0.75rem;
     }
     @media (min-width: 640px) {
         .chain-label { font-size: 0.8rem; }
-    }
-    .rpc-input {
-        margin-top: 10px;
-    }
-    .rpc-input input {
-        font-size: 0.8rem;
-        padding: 8px;
-    }
-    .rpc-input label {
-        display: block;
-        color: #008f11;
-        font-size: 0.75rem;
-        margin-bottom: 4px;
-    }
-    .rpc-error {
-        color: #ff0040;
-        font-size: 0.75rem;
-        margin-top: 4px;
-        display: none;
     }
     .gas-estimate {
         margin-top: 10px;
@@ -294,7 +292,7 @@
         border: 1px solid #003b00;
         background: #000;
         font-size: 0.85rem;
-        overflow-x: auto; /* Allow horizontal scroll if needed */
+        overflow-x: auto;
     }
     .gas-estimate.hidden { display: none; }
     .gas-estimate.error { border-color: #ff0040; }
@@ -303,7 +301,7 @@
         display: flex;
         justify-content: space-between;
         margin-bottom: 4px;
-        flex-wrap: wrap; /* Allow wrapping on mobile */
+        flex-wrap: wrap;
         gap: 4px;
     }
     .gas-row:last-child {
@@ -319,7 +317,7 @@
     .gas-value {
         color: #00ff41;
         font-family: monospace;
-        word-break: break-all; /* Prevent overflow */
+        word-break: break-all;
     }
     .gas-value.error { color: #ff0040; }
     .gas-value.warning { color: #ffaa00; }
@@ -331,31 +329,72 @@
         padding-top: 8px;
         word-break: break-word;
     }
-    .gas-killer-config {
-        margin-top: 10px;
+    .token-info {
+        margin: 10px 0;
         padding: 10px;
-        border: 1px solid #ffaa00;
-        background: #0a0a00;
-        display: none;
+        border: 1px solid #003b00;
+        background: #000;
     }
-    .gas-killer-config.visible { display: block; }
-    .gas-killer-config label {
-        display: block;
-        color: #ffaa00;
-        font-size: 0.75rem;
+    .token-info-row {
+        display: flex;
+        justify-content: space-between;
         margin-bottom: 4px;
+        font-size: 0.85rem;
     }
-    .gas-killer-config input {
-        font-size: 0.8rem;
-        padding: 8px;
-        margin-bottom: 8px;
+    .token-info-row:last-child {
+        margin-bottom: 0;
+    }
+    .token-info-label {
+        color: #008f11;
+    }
+    .token-info-value {
+        color: #00ff41;
+    }
+    .token-info-value.warning {
+        color: #ffaa00;
+    }
+    .nft-image {
+        width: 100%;
+        max-width: 256px;
+        margin: 10px auto;
+        display: block;
+        border: 1px solid #003b00;
+        image-rendering: pixelated;
+    }
+    .token-input-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    .token-input-row input {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    .token-input-row button {
+        flex: 0 0 auto;
+    }
+    .step-input-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .step-input-row label {
+        color: #008f11;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    .step-input-row input {
+        flex: 1;
+        margin-bottom: 0;
+        max-width: 100px;
     }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>◉ ONCHAIN LIFE</h1>
-        <div class="subtitle">64x64 TOROIDAL GRID // CONWAY'S GAME OF LIFE</div>
+        <h1>◉ ONCHAIN LIFE NFT</h1>
+        <div class="subtitle">64x64 TOROIDAL GRID // CONWAY'S GAME OF LIFE // ERC721</div>
         
         <div class="box" data-title="Wallet">
             <div class="box-content">
@@ -373,32 +412,13 @@
                         <option value="1" disabled>Ethereum</option>
                         <option selected value="11155111">Sepolia</option>
                     </select>
-                    <!--<span class="chain-label">Chain for reading (click LOAD STATE after switching)</span>-->
                 </div>
-                <input type="text" id="contractAddr" placeholder="Onchain Life contract address" value="0xC4b84a3b3eA27d6899DEdE405d838533C780B3C8" oninput="onContractInput()">
-                <!--
-                <div class="rpc-input">
-                    <label>Custom RPC URL (optional - uses publicnode.com if empty)</label>
-                    <input type="text" id="rpcUrl" placeholder="https://..." oninput="validateRpc()">
-                    <div id="rpcError" class="rpc-error">Invalid URL - must start with http:// or https://</div>
-                </div>
-                -->
-                
-                <!--
-                <div id="gasKillerConfig" class="gas-killer-config">
-                    <label>Gas Killer Router URL</label>
-                    <input type="text" id="routerUrl" placeholder="https://router.gaskiller.io" value="">
-                    <label>API Key</label>
-                    <input type="password" id="apiKey" placeholder="your-api-key">
-                </div>
-                -->
+                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="" oninput="onContractInput()">
+                <input type="text" id="stepTokenAddr" placeholder="STEP Token contract address (ERC20)" value="" oninput="onContractInput()">
                 
                 <div class="button-row">
-                    <button onclick="loadFromContract()" id="btnLoad">LOAD STATE</button>
-                    <button onclick="stepContract()" id="btnStep" class="danger" disabled>CALL STEP()</button>
-                    <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
-                    <button onclick="estimateStepGas()" id="btnEstimate">ESTIMATE GAS</button>
-                    <!--<button onclick="toggleGasKillerConfig()" class="wallet-btn small">⚙️ Gas Killer Config</button>-->
+                    <button onclick="estimateMintGas()" id="btnEstimateMint" disabled>ESTIMATE MINT</button>
+                    <button onclick="estimateStepGas()" id="btnEstimate" disabled>ESTIMATE STEP</button>
                 </div>
 
                 <div id="gasEstimate" class="gas-estimate hidden">
@@ -419,18 +439,65 @@
             </div>
         </div>
 
-        <div id="status" class="status">Ready - Connect your wallet to start</div>
+        <div id="status" class="status">Ready - Connect your wallet and enter contract addresses</div>
         
-        <div class="box" data-title="Grid Simulation">
+        <div class="box" data-title="Mint New Life">
             <div class="box-content">
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <button onclick="stepLocal()">STEP +1</button>
-                    <button onclick="toggleAutoStep()" id="btnAuto">PLAY</button>
-                    <button onclick="loadGlider()">GLIDER</button>
-                    <button onclick="randomize()">RANDOM</button>
-                    <button onclick="clearGrid()">CLEAR</button>
+                <div class="token-info">
+                    <div class="token-info-row">
+                        <span class="token-info-label">Mint Price:</span>
+                        <span class="token-info-value">0.007 ETH</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">Next Token ID:</span>
+                        <span class="token-info-value" id="nextTokenId">-</span>
+                    </div>
                 </div>
+                <div class="button-row">
+                    <button onclick="mintNFT()" id="btnMint" class="mint" disabled>MINT (0.007 ETH)</button>
+                    <button onclick="mintGasKiller()" id="btnMintGasKiller" class="alt" disabled>GAS KILLER MINT</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" data-title="View / Evolve Token">
+            <div class="box-content">
+                <div class="token-input-row">
+                    <input type="number" id="tokenId" placeholder="Token ID" min="0" oninput="onTokenInput()">
+                    <button onclick="loadToken()" id="btnLoad" disabled>LOAD</button>
+                </div>
+                
+                <div id="tokenInfo" class="token-info" style="display: none;">
+                    <div class="token-info-row">
+                        <span class="token-info-label">Owner:</span>
+                        <span class="token-info-value" id="tokenOwner">-</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">Generation:</span>
+                        <span class="token-info-value" id="tokenGen">-</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">Live Cells:</span>
+                        <span class="token-info-value" id="tokenLive">-</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">Is Owner:</span>
+                        <span class="token-info-value" id="isOwner">-</span>
+                    </div>
+                    <div class="token-info-row" id="stepBalanceRow" style="display: none;">
+                        <span class="token-info-label">STEP Balance:</span>
+                        <span class="token-info-value" id="stepBalance">-</span>
+                    </div>
+                    <div class="token-info-row" id="stepAllowanceRow" style="display: none;">
+                        <span class="token-info-label">STEP Allowance:</span>
+                        <span class="token-info-value" id="stepAllowance">-</span>
+                    </div>
+                </div>
+
+                <img id="nftImage" class="nft-image" style="display: none;" alt="NFT Preview">
+                
                 <canvas id="grid" width="512" height="512"></canvas>
+                
                 <div class="stats">
                     <div class="stat">
                         <div class="stat-value" id="genDisplay">0</div>
@@ -441,8 +508,27 @@
                         <div class="stat-label">Live Cells</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-value" id="chainDisplay">-</div>
-                        <div class="stat-label">Onchain</div>
+                        <div class="stat-value" id="tokenIdDisplay">-</div>
+                        <div class="stat-label">Token ID</div>
+                    </div>
+                </div>
+
+                <div class="button-row" style="margin-top: 20px;">
+                    <button onclick="stepLocal()">PREVIEW STEP</button>
+                    <button onclick="toggleAutoStep()" id="btnAuto">PLAY</button>
+                    <button onclick="resetToOnchain()" id="btnReset" disabled>RESET</button>
+                </div>
+                
+                <div id="stepControls" style="display: none; margin-top: 15px;">
+                    <div class="step-input-row">
+                        <label>Generations:</label>
+                        <input type="number" id="stepGenerations" value="1" min="1" max="10" onchange="updateStepCost()">
+                        <span style="color: #008f11; font-size: 0.85rem;">Cost: <span id="stepCostDisplay">1</span> STEP</span>
+                    </div>
+                    <div class="button-row">
+                        <button onclick="approveStepToken()" id="btnApprove" class="approve" style="display: none;">APPROVE STEP</button>
+                        <button onclick="stepContract()" id="btnStep" class="danger" disabled>STEP ONCHAIN</button>
+                        <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
                     </div>
                 </div>
             </div>
@@ -451,23 +537,38 @@
 
     <script>
         const ABI = [
-            { name: 'getBoard', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256[16]' }] },
-            { name: 'generation', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
-            { name: 'step', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'uint32' }], outputs: [] }
+            { name: 'mint', type: 'function', stateMutability: 'payable', inputs: [], outputs: [{ type: 'uint256' }] },
+            { name: 'getBoard', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'uint256[16]' }] },
+            { name: 'generation', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'uint256' }] },
+            { name: 'step', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'uint256' }, { type: 'uint32' }], outputs: [] },
+            { name: 'ownerOf', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'address' }] },
+            { name: 'nextTokenId', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
+            { name: 'tokenURI', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'string' }] },
+            { name: 'MINT_PRICE', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
+            { name: 'stepToken', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] }
         ];
         
-        // CORS-friendly public RPC endpoints
+        const ERC20_ABI = [
+            { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }], outputs: [{ type: 'uint256' }] },
+            { name: 'allowance', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }, { type: 'address' }], outputs: [{ type: 'uint256' }] },
+            { name: 'approve', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'address' }, { type: 'uint256' }], outputs: [{ type: 'bool' }] }
+        ];
+        
         const PUBLIC_RPCS = {
             1: 'https://ethereum-rpc.publicnode.com',
             8453: 'https://base-rpc.publicnode.com',
             11155111: 'https://ethereum-sepolia-rpc.publicnode.com'
         };
         
-        const BLOCK_GAS_LIMIT = 16777216n; // 16.77M
+        const BLOCK_GAS_LIMIT = 16777216n;
+        const MINT_PRICE_ETH = '0.007';
         
         const W = 64, H = 64, WORDS = 16;
         let board = new Array(WORDS).fill(0n);
         let generation = 0;
+        let currentTokenId = null;
+        let onchainBoard = null;
+        let onchainGeneration = 0;
         let viemClients = { public: null, wallet: null };
         let defaultPublicClient = null;
         let currentAccount = null;
@@ -478,6 +579,7 @@
         let gasEstimateValid = false;
         let autoStepInterval = null;
         let isAutoStepping = false;
+        let stepTokenAddress = null;
         const AUTO_STEP_DELAY = 200;
         
         const canvas = document.getElementById('grid');
@@ -486,7 +588,6 @@
         
         const availableWallets = [];
         
-        // EIP-6963 listener (set up immediately, before MetaMask might inject)
         window.addEventListener('eip6963:announceProvider', (event) => {
             if (event.detail && event.detail.info && event.detail.provider) {
                 const { info, provider } = event.detail;
@@ -513,12 +614,9 @@
             return 'Ethereum';
         }
         
-        // Collect all providers from window.ethereum (handles EIP-1193 and EIP-5749)
         function getInjectedProviders() {
             const providers = [];
-            
             if (typeof window.ethereum !== 'undefined' && window.ethereum !== null) {
-                // EIP-5749: multiple providers
                 if (window.ethereum.providers && Array.isArray(window.ethereum.providers) && window.ethereum.providers.length > 0) {
                     window.ethereum.providers.forEach(p => {
                         if (p && typeof p.request === 'function') providers.push(p);
@@ -527,7 +625,6 @@
                     providers.push(window.ethereum);
                 }
             }
-            
             return providers;
         }
         
@@ -557,10 +654,9 @@
             });
         }
         
-        // Poll for window.ethereum in case MetaMask injects late
         function pollForEthereum() {
             let attempts = 0;
-            const maxAttempts = 50; // 10 seconds at 200ms intervals
+            const maxAttempts = 50;
             const interval = setInterval(() => {
                 attempts++;
                 syncWalletsFromInjected();
@@ -570,41 +666,9 @@
             }, 200);
         }
         
-        function isValidUrl(string) {
-            try {
-                const url = new URL(string);
-                return url.protocol === 'http:' || url.protocol === 'https:';
-            } catch (_) {
-                return false;
-            }
-        }
-        /*
-        function validateRpc() {
-            const input = document.getElementById('rpcUrl');
-            const error = document.getElementById('rpcError');
-            const value = input.value.trim();
-            
-            if (value && !isValidUrl(value)) {
-                error.style.display = 'block';
-                input.style.borderColor = '#ff0040';
-            } else {
-                error.style.display = 'none';
-                input.style.borderColor = value ? '#00ff41' : '#003b00';
-            }
-        }*/
-        /*
-        function toggleGasKillerConfig() {
-            const config = document.getElementById('gasKillerConfig');
-            config.classList.toggle('visible');
-        }
-        */
-        
         function createPublicClientForChain(chainId) {
             const chain = getChainById(chainId);
-            //const customRpc = document.getElementById('rpcUrl').value.trim();
-            // Only use custom RPC if it's a valid URL
-            const rpcUrl = /*isValidUrl(customRpc) ? customRpc :*/ PUBLIC_RPCS[chainId];
-            
+            const rpcUrl = PUBLIC_RPCS[chainId];
             return window.viem.createPublicClient({
                 chain: chain,
                 transport: window.viem.http(rpcUrl)
@@ -616,36 +680,105 @@
             defaultPublicClient = createPublicClientForChain(chainId);
         }
         
+        async function fetchStepTokenAddress() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            if (!addr || !addr.startsWith('0x') || addr.length !== 42) return;
+            
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            try {
+                const tokenAddr = await client.readContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'stepToken'
+                });
+                stepTokenAddress = tokenAddr;
+                document.getElementById('stepTokenAddr').value = tokenAddr;
+            } catch (err) {
+                console.log('Could not fetch step token address');
+            }
+        }
+        
         function onContractInput() {
             const addr = document.getElementById('contractAddr').value.trim();
             const isValid = addr && addr.startsWith('0x') && addr.length === 42;
             
-            document.getElementById('btnLoad').disabled = !isValid;
             document.getElementById('btnEstimate').disabled = !isValid;
+            document.getElementById('btnEstimateMint').disabled = !isValid;
+            document.getElementById('btnMint').disabled = !(isValid && currentAccount);
+            document.getElementById('btnMintGasKiller').disabled = !(isValid && currentAccount);
             
-            // Auto-estimate gas when valid address is entered
             if (isValid) {
-                estimateStepGas();
-            } else {
-                document.getElementById('gasEstimate').classList.add('hidden');
-                gasEstimateValid = false;
+                loadNextTokenId();
+                fetchStepTokenAddress();
+            }
+        }
+        
+        function onTokenInput() {
+            const tokenId = document.getElementById('tokenId').value;
+            document.getElementById('btnLoad').disabled = !tokenId;
+        }
+        
+        function updateStepCost() {
+            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+            document.getElementById('stepCostDisplay').textContent = gens;
+        }
+        
+        async function checkStepTokenApproval() {
+            if (!currentAccount || !stepTokenAddress) return;
+            
+            const addr = document.getElementById('contractAddr').value.trim();
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            try {
+                const [balance, allowance] = await Promise.all([
+                    client.readContract({
+                        address: stepTokenAddress,
+                        abi: ERC20_ABI,
+                        functionName: 'balanceOf',
+                        args: [currentAccount]
+                    }),
+                    client.readContract({
+                        address: stepTokenAddress,
+                        abi: ERC20_ABI,
+                        functionName: 'allowance',
+                        args: [currentAccount, addr]
+                    })
+                ]);
+                
+                const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+                const required = BigInt(gens) * BigInt(1e18);
+                
+                document.getElementById('stepBalance').textContent = window.viem.formatEther(balance);
+                document.getElementById('stepAllowance').textContent = window.viem.formatEther(allowance);
+                
+                const hasEnough = balance >= required;
+                const hasAllowance = allowance >= required;
+                
+                document.getElementById('stepBalance').className = hasEnough ? 'token-info-value' : 'token-info-value warning';
+                document.getElementById('stepAllowance').className = hasAllowance ? 'token-info-value' : 'token-info-value warning';
+                
+                document.getElementById('btnApprove').style.display = hasAllowance ? 'none' : 'inline-block';
                 updateStepButton();
+                
+            } catch (err) {
+                console.error('Error checking token approval:', err);
             }
         }
         
         function updateStepButton() {
             const btnStep = document.getElementById('btnStep');
             const btnGasKiller = document.getElementById('btnGasKiller');
+            const btnReset = document.getElementById('btnReset');
             
-            // Gas Killer button enabled when wallet is connected
-            btnGasKiller.disabled = !currentAccount;
+            const hasToken = currentTokenId !== null;
+            const isOwner = hasToken && document.getElementById('isOwner').textContent === 'Yes';
             
-            // Regular step button disabled if gas exceeds limit or no wallet
-            if (!currentAccount) {
-                btnStep.disabled = true;
-            } else {
-                btnStep.disabled = !gasEstimateValid;
-            }
+            btnGasKiller.disabled = !(hasToken && currentAccount && isOwner);
+            btnStep.disabled = !(hasToken && currentAccount && isOwner && gasEstimateValid && document.getElementById('btnApprove').style.display === 'none');
+            btnReset.disabled = !hasToken;
         }
         
         function formatGasLimit(gas) {
@@ -657,15 +790,32 @@
             return gas.toString();
         }
         
-        async function estimateStepGas() {
+        async function loadNextTokenId() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            if (!addr) return;
+            
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            try {
+                const nextId = await client.readContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'nextTokenId'
+                });
+                document.getElementById('nextTokenId').textContent = nextId.toString();
+            } catch (err) {
+                document.getElementById('nextTokenId').textContent = 'Error';
+            }
+        }
+        
+        async function estimateMintGas() {
             const addr = document.getElementById('contractAddr').value.trim();
             const gasDiv = document.getElementById('gasEstimate');
             const gasNote = document.getElementById('gasNote');
             
             if (!addr || !addr.startsWith('0x') || addr.length !== 42) {
                 gasDiv.classList.add('hidden');
-                gasEstimateValid = false;
-                updateStepButton();
                 return;
             }
             
@@ -673,84 +823,100 @@
             const client = viemClients.public || createPublicClientForChain(chainId);
             
             try {
-                // Estimate gas for step(1)
+                const gasLimit = await client.estimateContractGas({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'mint',
+                    args: [],
+                    account: currentAccount || '0x0000000000000000000000000000000000000000',
+                    value: window.viem.parseEther(MINT_PRICE_ETH)
+                });
+                
+                const gasPrice = await client.getGasPrice();
+                const totalCost = (gasLimit * gasPrice) + window.viem.parseEther(MINT_PRICE_ETH);
+                
+                document.getElementById('gasLimit').textContent = formatGasLimit(gasLimit);
+                document.getElementById('gasLimit').className = 'gas-value';
+                document.getElementById('gasPrice').textContent = (Number(gasPrice) / 1e9).toFixed(2) + ' gwei';
+                document.getElementById('gasCost').textContent = window.viem.formatEther(totalCost).substring(0, 10) + ' ETH';
+                document.getElementById('gasCost').className = 'gas-value';
+                
+                gasDiv.classList.remove('hidden', 'error', 'warning');
+                gasNote.innerHTML = 'Includes <span style="color: #00aaff">0.007 ETH</span> mint price';
+                gasNote.classList.remove('hidden');
+                
+            } catch (err) {
+                document.getElementById('gasLimit').textContent = 'Failed';
+                document.getElementById('gasLimit').className = 'gas-value error';
+                document.getElementById('gasPrice').textContent = '-';
+                document.getElementById('gasCost').textContent = '-';
+                gasDiv.classList.add('error');
+                gasNote.textContent = '⚠️ ' + (err.message || 'Gas estimation failed');
+                gasNote.classList.remove('hidden');
+                gasDiv.classList.remove('hidden');
+            }
+        }
+        
+        async function estimateStepGas() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const tokenId = document.getElementById('tokenId').value;
+            const gasDiv = document.getElementById('gasEstimate');
+            const gasNote = document.getElementById('gasNote');
+            
+            if (!addr || !addr.startsWith('0x') || addr.length !== 42 || !tokenId) {
+                gasDiv.classList.add('hidden');
+                gasEstimateValid = false;
+                updateStepButton();
+                return;
+            }
+            
+            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            try {
                 const gasLimit = await client.estimateContractGas({
                     address: addr,
                     abi: ABI,
                     functionName: 'step',
-                    args: [1],
+                    args: [BigInt(tokenId), gens],
                     account: currentAccount || '0x0000000000000000000000000000000000000000'
                 });
                 
-                // Get gas price
                 const gasPrice = await client.getGasPrice();
-                
-                // Calculate cost
                 const totalCost = gasLimit * gasPrice;
                 
-                // Store for later use
-                lastGasEstimate = {
-                    gasLimit,
-                    gasPrice,
-                    totalCost
-                };
-                
-                // Check if exceeds block limit
+                lastGasEstimate = { gasLimit, gasPrice, totalCost };
                 gasEstimateValid = gasLimit <= BLOCK_GAS_LIMIT;
                 
-                // Format values
-                const gasLimitFormatted = formatGasLimit(gasLimit);
-                const gasPriceGwei = (Number(gasPrice) / 1e9).toFixed(2);
-                const costEth = window.viem.formatEther(totalCost);
-                
-                // Update UI
-                document.getElementById('gasLimit').textContent = gasLimitFormatted;
+                document.getElementById('gasLimit').textContent = formatGasLimit(gasLimit);
                 document.getElementById('gasLimit').className = 'gas-value' + (gasEstimateValid ? '' : ' error');
-                document.getElementById('gasPrice').textContent = gasPriceGwei + ' gwei';
-                document.getElementById('gasCost').textContent = costEth.substring(0, 8) + ' ETH';
+                document.getElementById('gasPrice').textContent = (Number(gasPrice) / 1e9).toFixed(2) + ' gwei';
+                document.getElementById('gasCost').textContent = window.viem.formatEther(totalCost).substring(0, 8) + ' ETH';
                 document.getElementById('gasCost').className = 'gas-value' + (gasEstimateValid ? '' : ' error');
                 
-                // Show warning if exceeds limit
+                const stepCost = gens;
+                
                 if (!gasEstimateValid) {
                     gasDiv.classList.add('error');
-                    gasDiv.classList.remove('warning');
-                    gasNote.textContent = `⚠️ Gas limit (${formatGasLimit(gasLimit)}) exceeds block maximum (${formatGasLimit(BLOCK_GAS_LIMIT)}). Use GAS KILLER STEP instead.`;
-                    gasNote.classList.remove('hidden');
-                } else if (gasLimit > 10000000n) {
-                    // Warning if close to limit
-                    gasDiv.classList.add('warning');
-                    gasDiv.classList.remove('error');
-                    gasNote.textContent = `⚠️ Warning: Gas usage is very high (${formatGasLimit(gasLimit)}). Consider using GAS KILLER STEP.`;
+                    gasNote.innerHTML = `⚠️ Gas limit exceeds block maximum. Use GAS KILLER STEP.<br>Also requires <span style="color: #ff00ff">${stepCost} STEP</span> token${gens > 1 ? 's' : ''}.`;
                     gasNote.classList.remove('hidden');
                 } else {
                     gasDiv.classList.remove('error', 'warning');
-                    gasNote.classList.add('hidden');
+                    gasNote.innerHTML = `Requires <span style="color: #ff00ff">${stepCost} STEP</span> token${gens > 1 ? 's' : ''} (must approve first)`;
+                    gasNote.classList.remove('hidden');
                 }
                 
                 gasDiv.classList.remove('hidden');
                 
             } catch (err) {
-                console.error('Gas estimation failed:', err);
                 gasEstimateValid = false;
-                
                 document.getElementById('gasLimit').textContent = 'Failed';
                 document.getElementById('gasLimit').className = 'gas-value error';
                 document.getElementById('gasPrice').textContent = '-';
                 document.getElementById('gasCost').textContent = '-';
-                document.getElementById('gasCost').className = 'gas-value error';
-                
-                // Check for specific error types
-                let errorMsg = 'Gas estimation failed';
-                if (err.message?.includes('exceeds allowance') || err.message?.includes('gas required exceeds')) {
-                    errorMsg = `Gas exceeds block limit (${formatGasLimit(BLOCK_GAS_LIMIT)}). Use GAS KILLER STEP button.`;
-                } else if (err.message?.includes('revert')) {
-                    errorMsg = 'Contract call reverted. Contract may not exist.';
-                } else if (err.message?.includes('execution reverted')) {
-                    errorMsg = 'Transaction would revert. Check contract state.';
-                }
-                
                 gasDiv.classList.add('error');
-                gasNote.textContent = '⚠️ ' + errorMsg;
+                gasNote.textContent = '⚠️ Gas estimation failed: ' + (err.message || 'Unknown error');
                 gasNote.classList.remove('hidden');
                 gasDiv.classList.remove('hidden');
             }
@@ -758,60 +924,125 @@
             updateStepButton();
         }
         
-        async function stepGasKiller() {
+        async function approveStepToken() {
             const addr = document.getElementById('contractAddr').value.trim();
+            const stepAddr = document.getElementById('stepTokenAddr').value.trim();
             const statusEl = document.getElementById('status');
-            //const routerUrl = document.getElementById('routerUrl').value.trim();
-            //const apiKey = document.getElementById('apiKey').value.trim();
             
-            if (!viemClients.wallet || !addr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no address</span>';
+            if (!viemClients.wallet || !stepAddr) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token address</span>';
                 statusEl.className = 'status error';
                 return;
             }
             
-            /*
-            if (!routerUrl) {
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Please configure Gas Killer Router URL (click ⚙️)</span>';
-                statusEl.className = 'status warning';
-                toggleGasKillerConfig();
+            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+            const amount = BigInt(gens) * BigInt(1e18);
+            
+            statusEl.textContent = 'Approving STEP tokens...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const hash = await viemClients.wallet.writeContract({
+                    address: stepAddr,
+                    abi: ERC20_ABI,
+                    functionName: 'approve',
+                    args: [addr, amount]
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for approval: ' + hash.slice(0, 18) + '...</span>';
+                
+                await viemClients.public.waitForTransactionReceipt({ hash });
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens approved!</span>';
+                statusEl.className = 'status success';
+                
+                await checkStepTokenApproval();
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Approval failed: ' + escapeHtml(err.message) + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        async function mintNFT() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const statusEl = document.getElementById('status');
+            
+            if (!viemClients.wallet || !addr) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected</span>';
+                statusEl.className = 'status error';
                 return;
             }
-            */
+            
+            statusEl.textContent = 'Minting NFT (0.007 ETH)...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const hash = await viemClients.wallet.writeContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'mint',
+                    args: [],
+                    value: window.viem.parseEther(MINT_PRICE_ETH)
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
+                
+                const receipt = await viemClients.public.waitForTransactionReceipt({ hash });
+                const tokenId = parseInt(receipt.logs[0].topics[3], 16);
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">NFT Minted! Token #' + tokenId + '</span>';
+                statusEl.className = 'status success';
+                
+                document.getElementById('tokenId').value = tokenId;
+                loadNextTokenId();
+                await loadToken();
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message || 'Mint failed') + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        async function mintGasKiller() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const statusEl = document.getElementById('status');
+            
+            if (!viemClients.wallet || !addr) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected</span>';
+                statusEl.className = 'status error';
+                return;
+            }
             
             const chainId = parseInt(document.getElementById('chainSelect').value);
             const client = viemClients.public || createPublicClientForChain(chainId);
             
-            statusEl.textContent = 'Submitting to Gas Killer...';
+            statusEl.textContent = 'Submitting mint to Gas Killer...';
             statusEl.className = 'status pending';
             
             try {
-                // Get current block number
                 const blockNumber = await client.getBlockNumber();
                 
-                // Encode function data
                 const callData = window.viem.encodeFunctionData({
                     abi: ABI,
-                    functionName: 'step',
-                    args: [1]
+                    functionName: 'mint',
+                    args: []
                 });
                 
-                // Convert to byte array
                 const callDataBytes = [];
                 for (let i = 2; i < callData.length; i += 2) {
                     callDataBytes.push(parseInt(callData.substr(i, 2), 16));
                 }
                 
-                // Submit to Gas Killer router
                 const submitRes = await fetch('/api/gas-killer/submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                      target_address: addr,
-                      from_address: currentAccount,
-                      call_data: callDataBytes,
-                      value: '0x0',
-                      block_height: Number(blockNumber)
+                        target_address: addr,
+                        from_address: currentAccount,
+                        call_data: callDataBytes,
+                        value: '0x' + window.viem.parseEther(MINT_PRICE_ETH).toString(16),
+                        block_height: Number(blockNumber)
                     }),
                 });
                 
@@ -823,12 +1054,167 @@
                 const { task_id } = await submitRes.json();
                 statusEl.textContent = `Gas Killer task ${task_id.substring(0, 8)}... submitted, polling...`;
                 
-                // Poll for result
                 const payload = await pollGasKillerTask(task_id);
                 
-                statusEl.textContent = 'Executing optimized transaction...';
+                statusEl.textContent = 'Executing optimized mint...';
                 
-                // Submit transaction with optimized payload
+                const hash = await viemClients.wallet.sendTransaction({
+                    to: payload.to,
+                    data: payload.data,
+                    value: BigInt(payload.value),
+                    gas: BigInt(payload.estimated_gas),
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
+                
+                const receipt = await viemClients.public.waitForTransactionReceipt({ hash });
+                const tokenId = parseInt(receipt.logs[0].topics[3], 16);
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">NFT Minted via Gas Killer! Token #' + tokenId + '</span>';
+                statusEl.className = 'status success';
+                
+                document.getElementById('tokenId').value = tokenId;
+                loadNextTokenId();
+                await loadToken();
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Gas Killer failed: ' + escapeHtml(err.message) + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        async function loadToken() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const tokenId = document.getElementById('tokenId').value;
+            const statusEl = document.getElementById('status');
+            
+            if (!addr || !tokenId) return;
+            
+            currentTokenId = parseInt(tokenId);
+            
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            statusEl.textContent = 'Loading token #' + tokenId + '...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const [boardData, genData, owner] = await Promise.all([
+                    client.readContract({ address: addr, abi: ABI, functionName: 'getBoard', args: [BigInt(tokenId)] }),
+                    client.readContract({ address: addr, abi: ABI, functionName: 'generation', args: [BigInt(tokenId)] }),
+                    client.readContract({ address: addr, abi: ABI, functionName: 'ownerOf', args: [BigInt(tokenId)] }).catch(() => '0x0')
+                ]);
+                
+                board = boardData.map(n => BigInt(n.toString()));
+                onchainBoard = [...board];
+                generation = Number(genData.toString());
+                onchainGeneration = generation;
+                
+                const isOwner = currentAccount && owner.toLowerCase() === currentAccount.toLowerCase();
+                
+                document.getElementById('tokenInfo').style.display = 'block';
+                document.getElementById('tokenOwner').textContent = owner.slice(0, 6) + '...' + owner.slice(-4);
+                document.getElementById('tokenGen').textContent = generation;
+                document.getElementById('isOwner').textContent = isOwner ? 'Yes' : 'No';
+                
+                if (isOwner) {
+                    document.getElementById('stepControls').style.display = 'block';
+                    document.getElementById('stepBalanceRow').style.display = 'flex';
+                    document.getElementById('stepAllowanceRow').style.display = 'flex';
+                    await checkStepTokenApproval();
+                } else {
+                    document.getElementById('stepControls').style.display = 'none';
+                    document.getElementById('stepBalanceRow').style.display = 'none';
+                    document.getElementById('stepAllowanceRow').style.display = 'none';
+                }
+                
+                try {
+                    const tokenUri = await client.readContract({ address: addr, abi: ABI, functionName: 'tokenURI', args: [BigInt(tokenId)] });
+                    const base64Json = tokenUri.replace('data:application/json;base64,', '');
+                    const jsonStr = atob(base64Json);
+                    const metadata = JSON.parse(jsonStr);
+                    const imgEl = document.getElementById('nftImage');
+                    imgEl.src = metadata.image;
+                    imgEl.style.display = 'block';
+                } catch (e) {
+                    document.getElementById('nftImage').style.display = 'none';
+                }
+                
+                draw();
+                updateStats();
+                estimateStepGas();
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">Token #' + tokenId + ' loaded</span>';
+                statusEl.className = 'status success';
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message || 'Failed to load token') + '</span>';
+                statusEl.className = 'status error';
+                currentTokenId = null;
+                document.getElementById('tokenInfo').style.display = 'none';
+                document.getElementById('stepControls').style.display = 'none';
+                document.getElementById('nftImage').style.display = 'none';
+            }
+            
+            updateStepButton();
+        }
+        
+        async function stepGasKiller() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const tokenId = currentTokenId;
+            const statusEl = document.getElementById('status');
+            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+            
+            if (!viemClients.wallet || !addr || tokenId === null) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token selected</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            statusEl.textContent = 'Submitting step to Gas Killer...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const blockNumber = await client.getBlockNumber();
+                
+                const callData = window.viem.encodeFunctionData({
+                    abi: ABI,
+                    functionName: 'step',
+                    args: [BigInt(tokenId), gens]
+                });
+                
+                const callDataBytes = [];
+                for (let i = 2; i < callData.length; i += 2) {
+                    callDataBytes.push(parseInt(callData.substr(i, 2), 16));
+                }
+                
+                const submitRes = await fetch('/api/gas-killer/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target_address: addr,
+                        from_address: currentAccount,
+                        call_data: callDataBytes,
+                        value: '0x0',
+                        block_height: Number(blockNumber)
+                    }),
+                });
+                
+                if (!submitRes.ok) {
+                    const errorData = await submitRes.json();
+                    throw new Error(`${errorData.error?.code}: ${errorData.error?.message}`);
+                }
+                
+                const { task_id } = await submitRes.json();
+                statusEl.textContent = `Gas Killer task ${task_id.substring(0, 8)}... submitted, polling...`;
+                
+                const payload = await pollGasKillerTask(task_id);
+                
+                statusEl.textContent = 'Executing optimized step...';
+                
                 const hash = await viemClients.wallet.sendTransaction({
                     to: payload.to,
                     data: payload.data,
@@ -840,11 +1226,10 @@
                 
                 await viemClients.public.waitForTransactionReceipt({ hash });
                 
-                statusEl.innerHTML = '<span style="color: #00ff41;">Gas Killer transaction confirmed!</span>';
-                await loadFromContract();
+                statusEl.innerHTML = '<span style="color: #00ff41;">Step executed via Gas Killer!</span>';
+                await loadToken();
                 
             } catch (err) {
-                console.error('Gas Killer error:', err);
                 statusEl.innerHTML = '<span style="color: #ff0040;">Gas Killer failed: ' + escapeHtml(err.message) + '</span>';
                 statusEl.className = 'status error';
             }
@@ -868,14 +1253,12 @@
                 }
                 
                 const task = await res.json();
-                console.log('Gas Killer task:', task);
                 
                 if (task.status === 'ready') return task.payload;
                 if (task.status === 'failed' || task.status === 'expired') {
                     throw new Error(`Task ${task.status}: ${task.error}`);
                 }
                 
-                // Update status
                 const statusEl = document.getElementById('status');
                 statusEl.textContent = `Gas Killer processing... (${attempts}/${maxAttempts})`;
                 
@@ -885,32 +1268,72 @@
             throw new Error('Gas Killer polling timeout');
         }
         
+        async function stepContract() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const tokenId = currentTokenId;
+            const statusEl = document.getElementById('status');
+            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
+            
+            if (!viemClients.wallet || !addr || tokenId === null) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token selected</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            if (!gasEstimateValid) {
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Gas limit exceeded. Use GAS KILLER STEP.</span>';
+                statusEl.className = 'status warning';
+                return;
+            }
+            
+            statusEl.textContent = 'Sending transaction...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const hash = await viemClients.wallet.writeContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'step',
+                    args: [BigInt(tokenId), gens]
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
+                
+                await viemClients.public.waitForTransactionReceipt({ hash });
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">Transaction confirmed!</span>';
+                await loadToken();
+                
+            } catch (err) {
+                let msg = err.message || 'Transaction failed';
+                if (msg.includes('rejected') || err.code === 4001) msg = 'Transaction rejected by user';
+                else if (msg.includes('Not owner')) msg = 'Not owner of this token';
+                else if (msg.includes('STEP payment failed')) msg = 'STEP token payment failed (check balance/allowance)';
+                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
         async function switchChain() {
             if (!viemReady) return;
             
             const newChainId = parseInt(document.getElementById('chainSelect').value);
             const newChain = getChainById(newChainId);
             
-            // Update public client for reading
             createDefaultClient();
-            
-            // Re-estimate gas on new chain
             estimateStepGas();
             
-            // If wallet is connected, request chain switch
             if (currentProvider && currentAccount) {
                 const statusEl = document.getElementById('status');
                 statusEl.textContent = 'Requesting chain switch...';
                 statusEl.className = 'status pending';
                 
                 try {
-                    // Try to switch to the chain
                     await currentProvider.request({
                         method: 'wallet_switchEthereumChain',
                         params: [{ chainId: '0x' + newChainId.toString(16) }]
                     });
                     
-                    // Update wallet clients after switch
                     viemClients.public = createPublicClientForChain(newChainId);
                     viemClients.wallet = window.viem.createWalletClient({ 
                         account: currentAccount,
@@ -920,9 +1343,10 @@
                     
                     statusEl.innerHTML = '<span style="color: #00ff41;">Switched to ' + getChainName(newChainId) + '</span>';
                     statusEl.className = 'status success';
+                    loadNextTokenId();
+                    fetchStepTokenAddress();
                     
                 } catch (err) {
-                    // If chain not added, try to add it
                     if (err.code === 4902) {
                         try {
                             await currentProvider.request({
@@ -935,39 +1359,19 @@
                                     blockExplorerUrls: newChain.blockExplorers ? [newChain.blockExplorers.default.url] : []
                                 }]
                             });
-                            
-                            // Retry switch after adding
                             await currentProvider.request({
                                 method: 'wallet_switchEthereumChain',
                                 params: [{ chainId: '0x' + newChainId.toString(16) }]
                             });
-                            
-                            viemClients.public = createPublicClientForChain(newChainId);
-                            viemClients.wallet = window.viem.createWalletClient({ 
-                                account: currentAccount,
-                                chain: newChain, 
-                                transport: window.viem.custom(currentProvider)
-                            });
-                            
-                            statusEl.innerHTML = '<span style="color: #00ff41;">Added and switched to ' + getChainName(newChainId) + '</span>';
-                            statusEl.className = 'status success';
-                            
+                            loadNextTokenId();
+                            fetchStepTokenAddress();
                         } catch (addErr) {
-                            statusEl.innerHTML = '<span style="color: #ff0040;">Failed to add chain: ' + escapeHtml(addErr.message) + '</span>';
+                            statusEl.innerHTML = '<span style="color: #ff0040;">Failed to add chain</span>';
                             statusEl.className = 'status error';
-                            // Revert selector to current wallet chain
-                            const currentChainId = await currentProvider.request({ method: 'eth_chainId' });
-                            document.getElementById('chainSelect').value = String(parseInt(currentChainId, 16));
                         }
-                    } else if (err.code === 4001) {
-                        statusEl.innerHTML = '<span style="color: #ffaa00;">Chain switch rejected by user</span>';
-                        statusEl.className = 'status pending';
-                        // Revert selector to current wallet chain
-                        const currentChainId = await currentProvider.request({ method: 'eth_chainId' });
-                        document.getElementById('chainSelect').value = String(parseInt(currentChainId, 16));
                     } else {
-                        statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message) + '</span>';
-                        statusEl.className = 'status error';
+                        statusEl.innerHTML = '<span style="color: #ffaa00;">Chain switch rejected</span>';
+                        statusEl.className = 'status pending';
                     }
                 }
             }
@@ -976,32 +1380,22 @@
         function init() {
             viemReady = true;
             createDefaultClient();
-            loadGlider();
-            onContractInput();
+            clearGrid();
             
-            // Start polling for injected wallets
             pollForEthereum();
-            
-            // Also do an immediate sync
             syncWalletsFromInjected();
-            
-            // Dispatch EIP-6963 request
             window.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
             
-            // Enable Load button (doesn't need wallet)
-            document.getElementById('btnLoad').disabled = false;
-            
-            document.getElementById('status').textContent = 'Ready - click Connect to select wallet';
+            document.getElementById('status').textContent = 'Ready - enter contract address and connect wallet';
         }
         
-        // Wait for viem module to load
         if (window.viem) {
             init();
         } else {
             window.addEventListener('viem:ready', init);
             setTimeout(() => {
                 if (!viemReady) {
-                    document.getElementById('status').innerHTML = '<span style="color: #ff0040;">Failed to load viem from esm.sh. Check connection and refresh.</span>';
+                    document.getElementById('status').innerHTML = '<span style="color: #ff0040;">Failed to load viem</span>';
                     document.getElementById('status').className = 'status error';
                 }
             }, 15000);
@@ -1015,7 +1409,7 @@
             const status = document.getElementById('status');
             
             if (!viemReady) {
-                status.innerHTML = '<span style="color: #ff0040;">Libraries still loading, please wait...</span>';
+                status.innerHTML = '<span style="color: #ff0040;">Libraries still loading...</span>';
                 status.className = 'status pending';
                 isPrompting = false;
                 return;
@@ -1025,40 +1419,30 @@
             status.textContent = 'Scanning for available wallets...';
             status.className = 'status pending';
             
-            // Force sync from injected providers
             syncWalletsFromInjected();
-            
-            // Dispatch EIP-6963 request
             window.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
-            
-            // Wait for EIP-6963 responses and late injections
             await new Promise(resolve => setTimeout(resolve, 500));
-            
-            // Sync again after waiting
             syncWalletsFromInjected();
             
             if (availableWallets.length === 0) {
-                // Last resort: wait longer and try again
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 syncWalletsFromInjected();
             }
             
             if (availableWallets.length === 0) {
-                status.innerHTML = '<span style="color: #ff0040;">No wallet found. Install MetaMask or refresh the page.</span>';
+                status.innerHTML = '<span style="color: #ff0040;">No wallet found. Install MetaMask.</span>';
                 status.className = 'status error';
                 cancelPrompt();
                 isPrompting = false;
                 return;
             }
             
-            // If only one wallet, connect directly
             if (availableWallets.length === 1) {
                 isPrompting = false;
                 await doConnect(0);
                 return;
             }
             
-            // Build wallet selection UI
             let html = '<span style="color: #008f11; font-size: 0.85rem;">Select wallet:</span>';
             availableWallets.forEach((w, i) => {
                 html += '<button class="wallet-btn small" onclick="doConnect(' + i + ')">' + escapeHtml(w.name) + '</button>';
@@ -1109,110 +1493,74 @@
                 const provider = wallet.provider;
                 currentProvider = provider;
                 
-                if (!provider || typeof provider.request !== 'function') {
-                    throw new Error('Invalid wallet provider');
-                }
+                const accounts = await provider.request({ method: 'eth_requestAccounts' });
                 
-                // Request accounts - triggers MetaMask popup
-                const accounts = await provider.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                if (!accounts || !Array.isArray(accounts) || accounts.length === 0) {
+                if (!accounts || accounts.length === 0) {
                     throw new Error('No accounts returned');
                 }
                 
                 currentAccount = accounts[0];
                 
-                if (!currentAccount || !currentAccount.startsWith('0x') || currentAccount.length !== 42) {
-                    throw new Error('Invalid account address: ' + currentAccount);
-                }
-                
-                // Get chain ID from wallet
                 const chainIdHex = await provider.request({ method: 'eth_chainId' });
                 const chainId = parseInt(chainIdHex, 16);
                 
-                // Update chain selector to match wallet's current chain
                 document.getElementById('chainSelect').value = String(chainId);
                 
                 const chain = getChainById(chainId);
                 
-                // Create public client using the selected chain
                 viemClients.public = createPublicClientForChain(chainId);
-                
-                // Create wallet client with the provider's transport
                 viemClients.wallet = window.viem.createWalletClient({ 
                     account: currentAccount,
                     chain: chain, 
                     transport: window.viem.custom(provider)
                 });
                 
-                // Re-estimate gas with connected account
-                await estimateStepGas();
+                onContractInput();
                 
-                // Update UI
                 const div = document.getElementById('walletDiv');
                 div.innerHTML = '<div class="connected"><span class="dot"></span><span>' + 
                     currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4) + 
                     '</span><button class="wallet-btn small" onclick="disconnect()">Disconnect</button></div>';
                 
-                statusEl.innerHTML = '<span style="color: #00ff41;">Connected to ' + escapeHtml(wallet.name) + ' (Chain: ' + getChainName(chainId) + ')</span>';
+                statusEl.innerHTML = '<span style="color: #00ff41;">Connected to ' + escapeHtml(wallet.name) + '</span>';
                 statusEl.className = 'status success';
                 
-                // Update button states
                 updateStepButton();
                 
-                // Event listeners
-                try {
-                    if (typeof provider.on === 'function') {
-                        provider.on('accountsChanged', (newAccounts) => {
-                            if (!newAccounts || newAccounts.length === 0) {
-                                disconnect();
-                            } else {
-                                currentAccount = newAccounts[0];
-                                const span = document.querySelector('.connected span:nth-child(2)');
-                                if (span) {
-                                    span.textContent = currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4);
-                                }
-                                // Re-estimate with new account
-                                estimateStepGas();
-                            }
-                        });
-                        
-                        provider.on('chainChanged', (newChainIdHex) => {
-                            const newChainId = parseInt(newChainIdHex, 16);
-                            // Update the selector to match wallet's new chain
-                            document.getElementById('chainSelect').value = String(newChainId);
-                            
-                            const newChain = getChainById(newChainId);
-                            viemClients.public = createPublicClientForChain(newChainId);
-                            viemClients.wallet = window.viem.createWalletClient({ 
-                                account: currentAccount,
-                                chain: newChain, 
-                                transport: window.viem.custom(provider)
-                            });
-                            statusEl.innerHTML = '<span style="color: #00ff41;">Wallet switched to ' + getChainName(newChainId) + '</span>';
-                            
-                            // Re-estimate on new chain
-                            estimateStepGas();
-                        });
-                        
-                        provider.on('disconnect', () => {
+                if (typeof provider.on === 'function') {
+                    provider.on('accountsChanged', (newAccounts) => {
+                        if (!newAccounts || newAccounts.length === 0) {
                             disconnect();
+                        } else {
+                            currentAccount = newAccounts[0];
+                            const span = document.querySelector('.connected span:nth-child(2)');
+                            if (span) span.textContent = currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4);
+                            onContractInput();
+                            if (currentTokenId !== null) loadToken();
+                        }
+                    });
+                    
+                    provider.on('chainChanged', (newChainIdHex) => {
+                        const newChainId = parseInt(newChainIdHex, 16);
+                        document.getElementById('chainSelect').value = String(newChainId);
+                        const newChain = getChainById(newChainId);
+                        viemClients.public = createPublicClientForChain(newChainId);
+                        viemClients.wallet = window.viem.createWalletClient({ 
+                            account: currentAccount,
+                            chain: newChain, 
+                            transport: window.viem.custom(provider)
                         });
-                    }
-                } catch (e) {
-                    console.warn('Event listener setup failed:', e);
+                        onContractInput();
+                        loadNextTokenId();
+                        fetchStepTokenAddress();
+                    });
+                    
+                    provider.on('disconnect', () => disconnect());
                 }
                 
             } catch (err) {
-                console.error('Connection error:', err);
                 let msg = err.message || 'Unknown error';
-                if (msg.includes('rejected') || msg.includes('denied') || err.code === 4001) {
-                    msg = 'Connection rejected by user';
-                } else if (msg.includes('already pending')) {
-                    msg = 'Check wallet popup - connection already requested';
-                }
+                if (msg.includes('rejected') || err.code === 4001) msg = 'Connection rejected by user';
                 statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
                 statusEl.className = 'status error';
                 cancelPrompt();
@@ -1230,111 +1578,12 @@
             document.getElementById('status').textContent = 'Disconnected';
             document.getElementById('status').className = 'status';
             
-            // Disable both step buttons
+            document.getElementById('btnMint').disabled = true;
+            document.getElementById('btnMintGasKiller').disabled = true;
             document.getElementById('btnStep').disabled = true;
             document.getElementById('btnGasKiller').disabled = true;
             
-            // Re-estimate without account
-            estimateStepGas();
-        }
-        
-        async function loadFromContract() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const statusEl = document.getElementById('status');
-            
-            if (!addr || !addr.startsWith('0x') || addr.length !== 42) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Invalid contract address</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            // Use wallet's public client if connected, otherwise default
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            if (!client) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">No client available</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            statusEl.textContent = 'Reading contract on ' + getChainName(chainId) + '...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const [boardData, genData] = await Promise.all([
-                    client.readContract({ 
-                        address: addr, 
-                        abi: ABI, 
-                        functionName: 'getBoard' 
-                    }),
-                    client.readContract({ 
-                        address: addr, 
-                        abi: ABI, 
-                        functionName: 'generation' 
-                    })
-                ]);
-                
-                board = boardData.map(n => BigInt(n.toString()));
-                generation = Number(genData.toString());
-                
-                draw();
-                updateStats();
-                document.getElementById('chainDisplay').textContent = generation;
-                statusEl.innerHTML = '<span style="color: #00ff41;">State loaded from contract on ' + getChainName(chainId) + '</span>';
-                statusEl.className = 'status success';
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message || 'Failed to read contract') + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function stepContract() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !addr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no address</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            // Check gas estimate before attempting
-            if (!gasEstimateValid) {
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Cannot step: Gas limit exceeds block maximum. Use GAS KILLER STEP instead.</span>';
-                statusEl.className = 'status warning';
-                return;
-            }
-            
-            statusEl.textContent = 'Sending transaction...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const hash = await viemClients.wallet.writeContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'step',
-                    args: [1]
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">Transaction confirmed!</span>';
-                await loadFromContract();
-                
-            } catch (err) {
-                let msg = err.message || 'Transaction failed';
-                if (msg.includes('rejected') || err.code === 4001) {
-                    msg = 'Transaction rejected by user';
-                } else if (msg.includes('exceeds allowance') || msg.includes('gas required exceeds')) {
-                    msg = 'Gas limit exceeded - use GAS KILLER STEP instead';
-                }
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
-                statusEl.className = 'status error';
-            }
+            onContractInput();
         }
         
         function getCell(b, x, y) {
@@ -1372,6 +1621,17 @@
             updateStats();
         }
         
+        function resetToOnchain() {
+            if (onchainBoard) {
+                board = [...onchainBoard];
+                generation = onchainGeneration;
+                draw();
+                updateStats();
+                document.getElementById('status').textContent = 'Reset to onchain state';
+                document.getElementById('status').className = 'status';
+            }
+        }
+        
         function draw() {
             ctx.fillStyle = '#000';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1387,6 +1647,7 @@
         
         function updateStats() {
             document.getElementById('genDisplay').textContent = generation;
+            document.getElementById('tokenIdDisplay').textContent = currentTokenId !== null ? '#' + currentTokenId : '-';
             let live = 0;
             for (let y = 0; y < H; y++) {
                 for (let x = 0; x < W; x++) {
@@ -1394,8 +1655,9 @@
                 }
             }
             document.getElementById('liveDisplay').textContent = live;
+            document.getElementById('tokenLive').textContent = live;
         }
-      
+        
         function toggleAutoStep() {
             if (isAutoStepping) {
                 stopAutoStep();
@@ -1406,48 +1668,22 @@
 
         function startAutoStep() {
             if (isAutoStepping) return;
-            
             isAutoStepping = true;
             document.getElementById('btnAuto').textContent = 'STOP';
             document.getElementById('btnAuto').style.borderColor = '#ff0040';
             document.getElementById('btnAuto').style.color = '#ff0040';
-            
-            // Do first step immediately
             stepLocal();
-            
-            // Then continue stepping
-            autoStepInterval = setInterval(() => {
-                stepLocal();
-            }, AUTO_STEP_DELAY);
+            autoStepInterval = setInterval(() => stepLocal(), AUTO_STEP_DELAY);
         }
 
         function stopAutoStep() {
             if (!isAutoStepping) return;
-            
             isAutoStepping = false;
             clearInterval(autoStepInterval);
             autoStepInterval = null;
-            
             document.getElementById('btnAuto').textContent = 'PLAY';
             document.getElementById('btnAuto').style.borderColor = '#00ff41';
             document.getElementById('btnAuto').style.color = '#00ff41';
-        }
-
-        // Stop auto-stepping when user interacts with grid
-        canvas.addEventListener('click', () => {
-            if (isAutoStepping) stopAutoStep();
-        });
-        
-        function loadGlider() {
-            board = new Array(WORDS).fill(0n);
-            setCell(board, 1, 0);
-            setCell(board, 2, 1);
-            setCell(board, 0, 2);
-            setCell(board, 1, 2);
-            setCell(board, 2, 2);
-            generation = 0;
-            draw();
-            updateStats();
         }
         
         function clearGrid() {
@@ -1457,18 +1693,8 @@
             updateStats();
         }
         
-        function randomize() {
-            for (let i = 0; i < WORDS; i++) {
-                board[i] = BigInt('0x' + Array(64).fill(0).map(() => 
-                    Math.floor(Math.random() * 16).toString(16)
-                ).join(''));
-            }
-            generation = 0;
-            draw();
-            updateStats();
-        }
-        
         canvas.addEventListener('click', (e) => {
+            if (isAutoStepping) stopAutoStep();
             const rect = canvas.getBoundingClientRect();
             const x = Math.floor((e.clientX - rect.left) / CS);
             const y = Math.floor((e.clientY - rect.top) / CS);
@@ -1479,7 +1705,6 @@
                 } else {
                     setCell(board, x, y);
                 }
-                generation = 0;
                 draw();
                 updateStats();
             }
@@ -1489,21 +1714,21 @@
         window.cancelPrompt = cancelPrompt;
         window.doConnect = doConnect;
         window.disconnect = disconnect;
-        window.loadFromContract = loadFromContract;
+        window.switchChain = switchChain;
+        window.onContractInput = onContractInput;
+        window.onTokenInput = onTokenInput;
+        window.estimateMintGas = estimateMintGas;
+        window.estimateStepGas = estimateStepGas;
+        window.approveStepToken = approveStepToken;
+        window.mintNFT = mintNFT;
+        window.mintGasKiller = mintGasKiller;
+        window.loadToken = loadToken;
         window.stepContract = stepContract;
         window.stepGasKiller = stepGasKiller;
         window.stepLocal = stepLocal;
-        window.loadGlider = loadGlider;
-        window.clearGrid = clearGrid;
-        window.randomize = randomize;
-        window.switchChain = switchChain;
-        //window.validateRpc = validateRpc;
-        window.onContractInput = onContractInput;
-        window.estimateStepGas = estimateStepGas;
-        //window.toggleGasKillerConfig = toggleGasKillerConfig;
         window.toggleAutoStep = toggleAutoStep;
-        window.startAutoStep = startAutoStep;
-        window.stopAutoStep = stopAutoStep;
+        window.resetToOnchain = resetToOnchain;
+        window.updateStepCost = updateStepCost;
     </script>
 </body>
 </html>
