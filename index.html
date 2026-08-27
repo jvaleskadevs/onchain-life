@@ -394,7 +394,7 @@
 <body>
     <div class="container">
         <h1>◉ ONCHAIN LIFE NFT</h1>
-        <div class="subtitle">64x64 TOROIDAL GRID // CONWAY'S GAME OF LIFE // ERC721</div>
+        <div class="subtitle">64x64 TOROIDAL GRID // CONWAY'S GAME OF LIFE</div>
         
         <div class="box" data-title="Wallet">
             <div class="box-content">
@@ -413,7 +413,7 @@
                         <option selected value="11155111">Sepolia</option>
                     </select>
                 </div>
-                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="" oninput="onContractInput()">
+                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="0xFffBf65b0c8045eDf8CA269a3B47A6c0b29E0eBf" oninput="onContractInput()">
                 <input type="text" id="stepTokenAddr" placeholder="STEP Token contract address (ERC20)" value="" oninput="onContractInput()">
                 
                 <div class="button-row">
@@ -1386,7 +1386,9 @@
             syncWalletsFromInjected();
             window.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
             
-            document.getElementById('status').textContent = 'Ready - enter contract address and connect wallet';
+            onContractInput();
+            
+            document.getElementById('status').textContent = 'Ready - connect wallet';
         }
         
         if (window.viem) {
