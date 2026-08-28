@@ -389,6 +389,32 @@
         margin-bottom: 0;
         max-width: 100px;
     }
+    .step-management {
+        margin-top: 15px;
+        padding: 15px;
+        border: 1px solid #003b00;
+        background: #000;
+    }
+    .step-management h3 {
+        color: #00ff41;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+    }
+    .step-deposit-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+    .step-deposit-row input {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    .step-deposit-row button {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
     </style>
 </head>
 <body>
@@ -413,7 +439,7 @@
                         <option selected value="11155111">Sepolia</option>
                     </select>
                 </div>
-                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="0xFffBf65b0c8045eDf8CA269a3B47A6c0b29E0eBf" oninput="onContractInput()">
+                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="0x04271CE4fc29C765C9746a4b505f4f3cDe4975ed" oninput="onContractInput()">
                 <input type="text" id="stepTokenAddr" placeholder="STEP Token contract address (ERC20)" value="" oninput="onContractInput()">
                 
                 <div class="button-row">
@@ -440,6 +466,39 @@
         </div>
 
         <div id="status" class="status">Ready - Connect your wallet and enter contract addresses</div>
+        
+        <div class="box" data-title="STEP Token Management">
+            <div class="box-content">
+                <div class="token-info">
+                    <div class="token-info-row">
+                        <span class="token-info-label">Wallet STEP Balance:</span>
+                        <span class="token-info-value" id="walletStepBalance">-</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">Deposited on Contract:</span>
+                        <span class="token-info-value" id="depositedStepBalance">-</span>
+                    </div>
+                    <div class="token-info-row">
+                        <span class="token-info-label">STEP Allowance:</span>
+                        <span class="token-info-value" id="stepAllowanceDisplay">-</span>
+                    </div>
+                </div>
+                
+                <div class="step-management">
+                    <h3>Deposit STEP</h3>
+                    <div class="step-deposit-row">
+                        <input type="number" id="depositAmount" placeholder="Amount to deposit" min="1" step="1">
+                        <button onclick="depositStepToken()" id="btnDepositStep" class="approve">DEPOSIT</button>
+                    </div>
+                    
+                    <h3 style="margin-top: 15px;">Withdraw STEP</h3>
+                    <div class="step-deposit-row">
+                        <input type="number" id="withdrawAmount" placeholder="Amount to withdraw" min="1" step="1">
+                        <button onclick="withdrawStepToken()" id="btnWithdrawStep" class="danger">WITHDRAW</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <div class="box" data-title="Mint New Life">
             <div class="box-content">
@@ -485,12 +544,12 @@
                         <span class="token-info-value" id="isOwner">-</span>
                     </div>
                     <div class="token-info-row" id="stepBalanceRow" style="display: none;">
-                        <span class="token-info-label">STEP Balance:</span>
+                        <span class="token-info-label">Wallet STEP:</span>
                         <span class="token-info-value" id="stepBalance">-</span>
                     </div>
-                    <div class="token-info-row" id="stepAllowanceRow" style="display: none;">
-                        <span class="token-info-label">STEP Allowance:</span>
-                        <span class="token-info-value" id="stepAllowance">-</span>
+                    <div class="token-info-row" id="depositedBalanceRow" style="display: none;">
+                        <span class="token-info-label">Deposited STEP:</span>
+                        <span class="token-info-value" id="tokenDepositedBalance">-</span>
                     </div>
                 </div>
 
@@ -526,7 +585,6 @@
                         <span style="color: #008f11; font-size: 0.85rem;">Cost: <span id="stepCostDisplay">1</span> STEP</span>
                     </div>
                     <div class="button-row">
-                        <button onclick="approveStepToken()" id="btnApprove" class="approve" style="display: none;">APPROVE STEP</button>
                         <button onclick="stepContract()" id="btnStep" class="danger" disabled>STEP ONCHAIN</button>
                         <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
                     </div>
@@ -545,7 +603,10 @@
             { name: 'nextTokenId', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
             { name: 'tokenURI', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'string' }] },
             { name: 'MINT_PRICE', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
-            { name: 'stepToken', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] }
+            { name: 'stepToken', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+            { name: 'depositStep', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'uint256' }], outputs: [] },
+            { name: 'withdrawStep', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'uint256' }], outputs: [] },
+            { name: 'stepBalances', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }], outputs: [{ type: 'uint256' }] }
         ];
         
         const ERC20_ABI = [
@@ -695,8 +756,51 @@
                 });
                 stepTokenAddress = tokenAddr;
                 document.getElementById('stepTokenAddr').value = tokenAddr;
+                await updateStepBalances();
             } catch (err) {
                 console.log('Could not fetch step token address');
+            }
+        }
+        
+        async function updateStepBalances() {
+            if (!currentAccount || !stepTokenAddress) return;
+            
+            const addr = document.getElementById('contractAddr').value.trim();
+            const chainId = parseInt(document.getElementById('chainSelect').value);
+            const client = viemClients.public || createPublicClientForChain(chainId);
+            
+            try {
+                const [walletBalance, depositedBalance, allowance] = await Promise.all([
+                    client.readContract({
+                        address: stepTokenAddress,
+                        abi: ERC20_ABI,
+                        functionName: 'balanceOf',
+                        args: [currentAccount]
+                    }),
+                    client.readContract({
+                        address: addr,
+                        abi: ABI,
+                        functionName: 'stepBalances',
+                        args: [currentAccount]
+                    }),
+                    client.readContract({
+                        address: stepTokenAddress,
+                        abi: ERC20_ABI,
+                        functionName: 'allowance',
+                        args: [currentAccount, addr]
+                    })
+                ]);
+                
+                document.getElementById('walletStepBalance').textContent = window.viem.formatEther(walletBalance);
+                document.getElementById('depositedStepBalance').textContent = window.viem.formatEther(depositedBalance);
+                document.getElementById('stepAllowanceDisplay').textContent = window.viem.formatEther(allowance);
+                
+                // Update token info section if visible
+                document.getElementById('stepBalance').textContent = window.viem.formatEther(walletBalance);
+                document.getElementById('tokenDepositedBalance').textContent = window.viem.formatEther(depositedBalance);
+                
+            } catch (err) {
+                console.error('Error fetching STEP balances:', err);
             }
         }
         
@@ -733,7 +837,7 @@
             const client = viemClients.public || createPublicClientForChain(chainId);
             
             try {
-                const [balance, allowance] = await Promise.all([
+                const [balance, allowance, deposited] = await Promise.all([
                     client.readContract({
                         address: stepTokenAddress,
                         abi: ERC20_ABI,
@@ -745,22 +849,25 @@
                         abi: ERC20_ABI,
                         functionName: 'allowance',
                         args: [currentAccount, addr]
+                    }),
+                    client.readContract({
+                        address: addr,
+                        abi: ABI,
+                        functionName: 'stepBalances',
+                        args: [currentAccount]
                     })
                 ]);
                 
                 const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-                const required = BigInt(gens) * BigInt(1e18);
+                const required = BigInt(gens);
                 
                 document.getElementById('stepBalance').textContent = window.viem.formatEther(balance);
-                document.getElementById('stepAllowance').textContent = window.viem.formatEther(allowance);
+                document.getElementById('tokenDepositedBalance').textContent = window.viem.formatEther(deposited);
                 
-                const hasEnough = balance >= required;
-                const hasAllowance = allowance >= required;
+                const hasEnoughDeposited = deposited >= required;
                 
-                document.getElementById('stepBalance').className = hasEnough ? 'token-info-value' : 'token-info-value warning';
-                document.getElementById('stepAllowance').className = hasAllowance ? 'token-info-value' : 'token-info-value warning';
+                document.getElementById('stepBalance').className = hasEnoughDeposited ? 'token-info-value' : 'token-info-value warning';
                 
-                document.getElementById('btnApprove').style.display = hasAllowance ? 'none' : 'inline-block';
                 updateStepButton();
                 
             } catch (err) {
@@ -777,7 +884,7 @@
             const isOwner = hasToken && document.getElementById('isOwner').textContent === 'Yes';
             
             btnGasKiller.disabled = !(hasToken && currentAccount && isOwner);
-            btnStep.disabled = !(hasToken && currentAccount && isOwner && gasEstimateValid && document.getElementById('btnApprove').style.display === 'none');
+            btnStep.disabled = !(hasToken && currentAccount && isOwner && gasEstimateValid);
             btnReset.disabled = !hasToken;
         }
         
@@ -899,11 +1006,11 @@
                 
                 if (!gasEstimateValid) {
                     gasDiv.classList.add('error');
-                    gasNote.innerHTML = `⚠️ Gas limit exceeds block maximum. Use GAS KILLER STEP.<br>Also requires <span style="color: #ff00ff">${stepCost} STEP</span> token${gens > 1 ? 's' : ''}.`;
+                    gasNote.innerHTML = `⚠️ Gas limit exceeds block maximum. Use GAS KILLER STEP.<br>Requires <span style="color: #ff00ff">${stepCost} STEP</span> from deposited balance.`;
                     gasNote.classList.remove('hidden');
                 } else {
                     gasDiv.classList.remove('error', 'warning');
-                    gasNote.innerHTML = `Requires <span style="color: #ff00ff">${stepCost} STEP</span> token${gens > 1 ? 's' : ''} (must approve first)`;
+                    gasNote.innerHTML = `Requires <span style="color: #ff00ff">${stepCost} STEP</span> from deposited balance`;
                     gasNote.classList.remove('hidden');
                 }
                 
@@ -960,6 +1067,127 @@
                 
             } catch (err) {
                 statusEl.innerHTML = '<span style="color: #ff0040;">Approval failed: ' + escapeHtml(err.message) + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        async function depositStepToken() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const stepAddr = document.getElementById('stepTokenAddr').value.trim();
+            const amount = document.getElementById('depositAmount').value;
+            const statusEl = document.getElementById('status');
+            
+            if (!viemClients.wallet || !addr || !stepAddr) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or addresses not set</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Enter a valid amount</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            const depositAmount = window.viem.parseEther(amount);
+            
+            statusEl.textContent = 'Checking allowance...';
+            statusEl.className = 'status pending';
+            
+            try {
+                // First check allowance
+                const allowance = await viemClients.public.readContract({
+                    address: stepAddr,
+                    abi: ERC20_ABI,
+                    functionName: 'allowance',
+                    args: [currentAccount, addr]
+                });
+                
+                // If allowance is insufficient, approve first
+                if (allowance < depositAmount) {
+                    statusEl.textContent = 'Approving STEP tokens...';
+                    
+                    const approveHash = await viemClients.wallet.writeContract({
+                        address: stepAddr,
+                        abi: ERC20_ABI,
+                        functionName: 'approve',
+                        args: [addr, depositAmount]
+                    });
+                    
+                    statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for approval: ' + approveHash.slice(0, 18) + '...</span>';
+                    await viemClients.public.waitForTransactionReceipt({ hash: approveHash });
+                }
+                
+                // Now deposit
+                statusEl.textContent = 'Depositing STEP tokens...';
+                
+                const hash = await viemClients.wallet.writeContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'depositStep',
+                    args: [depositAmount]
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for deposit: ' + hash.slice(0, 18) + '...</span>';
+                
+                await viemClients.public.waitForTransactionReceipt({ hash });
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens deposited!</span>';
+                statusEl.className = 'status success';
+                
+                document.getElementById('depositAmount').value = '';
+                await updateStepBalances();
+                await checkStepTokenApproval();
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Deposit failed: ' + escapeHtml(err.message) + '</span>';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        async function withdrawStepToken() {
+            const addr = document.getElementById('contractAddr').value.trim();
+            const amount = document.getElementById('withdrawAmount').value;
+            const statusEl = document.getElementById('status');
+            
+            if (!viemClients.wallet || !addr) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or contract address not set</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            if (!amount || parseFloat(amount) <= 0) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Enter a valid amount</span>';
+                statusEl.className = 'status error';
+                return;
+            }
+            
+            const withdrawAmount = window.viem.parseEther(amount);
+            
+            statusEl.textContent = 'Withdrawing STEP tokens...';
+            statusEl.className = 'status pending';
+            
+            try {
+                const hash = await viemClients.wallet.writeContract({
+                    address: addr,
+                    abi: ABI,
+                    functionName: 'withdrawStep',
+                    args: [withdrawAmount]
+                });
+                
+                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for withdrawal: ' + hash.slice(0, 18) + '...</span>';
+                
+                await viemClients.public.waitForTransactionReceipt({ hash });
+                
+                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens withdrawn!</span>';
+                statusEl.className = 'status success';
+                
+                document.getElementById('withdrawAmount').value = '';
+                await updateStepBalances();
+                await checkStepTokenApproval();
+                
+            } catch (err) {
+                statusEl.innerHTML = '<span style="color: #ff0040;">Withdrawal failed: ' + escapeHtml(err.message) + '</span>';
                 statusEl.className = 'status error';
             }
         }
@@ -1120,12 +1348,12 @@
                 if (isOwner) {
                     document.getElementById('stepControls').style.display = 'block';
                     document.getElementById('stepBalanceRow').style.display = 'flex';
-                    document.getElementById('stepAllowanceRow').style.display = 'flex';
+                    document.getElementById('depositedBalanceRow').style.display = 'flex';
                     await checkStepTokenApproval();
                 } else {
                     document.getElementById('stepControls').style.display = 'none';
                     document.getElementById('stepBalanceRow').style.display = 'none';
-                    document.getElementById('stepAllowanceRow').style.display = 'none';
+                    document.getElementById('depositedBalanceRow').style.display = 'none';
                 }
                 
                 try {
@@ -1303,12 +1531,13 @@
                 
                 statusEl.innerHTML = '<span style="color: #00ff41;">Transaction confirmed!</span>';
                 await loadToken();
+                await updateStepBalances();
                 
             } catch (err) {
                 let msg = err.message || 'Transaction failed';
                 if (msg.includes('rejected') || err.code === 4001) msg = 'Transaction rejected by user';
                 else if (msg.includes('Not owner')) msg = 'Not owner of this token';
-                else if (msg.includes('STEP payment failed')) msg = 'STEP token payment failed (check balance/allowance)';
+                else if (msg.includes('Not enough steps')) msg = 'Not enough deposited STEP balance';
                 statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
                 statusEl.className = 'status error';
             }
@@ -1528,6 +1757,7 @@
                 statusEl.className = 'status success';
                 
                 updateStepButton();
+                await updateStepBalances();
                 
                 if (typeof provider.on === 'function') {
                     provider.on('accountsChanged', (newAccounts) => {
@@ -1539,6 +1769,7 @@
                             if (span) span.textContent = currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4);
                             onContractInput();
                             if (currentTokenId !== null) loadToken();
+                            updateStepBalances();
                         }
                     });
                     
@@ -1584,6 +1815,10 @@
             document.getElementById('btnMintGasKiller').disabled = true;
             document.getElementById('btnStep').disabled = true;
             document.getElementById('btnGasKiller').disabled = true;
+            
+            document.getElementById('walletStepBalance').textContent = '-';
+            document.getElementById('depositedStepBalance').textContent = '-';
+            document.getElementById('stepAllowanceDisplay').textContent = '-';
             
             onContractInput();
         }
@@ -1722,6 +1957,8 @@
         window.estimateMintGas = estimateMintGas;
         window.estimateStepGas = estimateStepGas;
         window.approveStepToken = approveStepToken;
+        window.depositStepToken = depositStepToken;
+        window.withdrawStepToken = withdrawStepToken;
         window.mintNFT = mintNFT;
         window.mintGasKiller = mintGasKiller;
         window.loadToken = loadToken;
