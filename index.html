@@ -2,599 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OnchainLife NFT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Onchain Life NFT - ARCADE</title>
     <script type="module">
-        import { createPublicClient, createWalletClient, custom, http, parseEther, formatEther, encodeFunctionData } from 'https://esm.sh/viem@2.21.0';
-        import { mainnet, base, sepolia } from 'https://esm.sh/viem@2.21.0/chains';
-        window.viem = { createPublicClient, createWalletClient, custom, http, parseEther, formatEther, encodeFunctionData, mainnet, base, sepolia };
-        window.dispatchEvent(new CustomEvent('viem:ready'));
-    </script>
-    <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-        font-family: 'Courier New', Courier, monospace;
-        background: #050505;
-        color: #00ff41;
-        min-height: 100vh;
-        padding: 10px;
-        line-height: 1.6;
-        overflow-x: hidden;
-    }
-    .container { 
-        max-width: 900px; 
-        margin: 0 auto;
-        width: 100%;
-    }
-    h1 { 
-        text-align: center; 
-        margin-bottom: 10px;
-        text-shadow: 0 0 10px #00ff41;
-        font-size: 1.5rem;
-    }
-    @media (min-width: 640px) {
-        h1 { font-size: 2rem; }
-        body { padding: 20px; }
-    }
-    .subtitle { 
-        text-align: center; 
-        color: #008f11; 
-        margin-bottom: 20px;
-        font-size: 0.8rem;
-        word-break: break-word;
-    }
-    @media (min-width: 640px) {
-        .subtitle { font-size: 0.9rem; margin-bottom: 30px; }
-    }
-    .box {
-        border: 1px solid #003b00;
-        background: #0a0a0a;
-        margin-bottom: 15px;
-        position: relative;
-        width: 100%;
-    }
-    @media (min-width: 640px) {
-        .box { margin-bottom: 20px; }
-    }
-    .box::before {
-        content: attr(data-title);
-        position: absolute;
-        top: -8px;
-        left: 10px;
-        background: #050505;
-        color: #00ff41;
-        padding: 0 8px;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-    }
-    @media (min-width: 640px) {
-        .box::before { top: -10px; font-size: 0.8rem; padding: 0 10px; }
-    }
-    .box-content { padding: 15px; }
-    @media (min-width: 640px) {
-        .box-content { padding: 20px; }
-    }
-    input, select {
-        background: #000;
-        border: 1px solid #003b00;
-        color: #00ff41;
-        padding: 8px;
-        font-family: inherit;
-        font-size: 16px;
-        margin-bottom: 10px;
-        width: 100%;
-        border-radius: 0;
-        -webkit-appearance: none;
-    }
-    @media (min-width: 640px) {
-        input, select { padding: 10px; font-size: 0.9rem; }
-    }
-    input:focus, select:focus {
-        outline: none;
-        border-color: #00ff41;
-        box-shadow: 0 0 5px #00ff41;
-    }
-    .button-row {
-        margin-top: 15px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-    button {
-        background: #001100;
-        border: 1px solid #00ff41;
-        color: #00ff41;
-        padding: 12px 16px;
-        font-family: inherit;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        flex: 1;
-        min-width: 80px;
-        min-height: 44px;
-    }
-    @media (min-width: 640px) {
-        button { 
-            padding: 10px 20px; 
-            font-size: 0.9rem;
-            flex: 0 1 auto;
-        }
-    }
-    button:hover:not(:disabled) {
-        background: #00ff41;
-        color: #000;
-        box-shadow: 0 0 10px #00ff41;
-    }
-    button:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-        border-color: #003b00;
-        color: #003b00;
-    }
-    button.danger {
-        border-color: #ff0040;
-        color: #ff0040;
-    }
-    button.danger:hover:not(:disabled) {
-        background: #ff0040;
-        color: #000;
-        box-shadow: 0 0 10px #ff0040;
-    }
-    button.alt {
-        border-color: #ffaa00;
-        color: #ffaa00;
-    }
-    button.alt:hover:not(:disabled) {
-        background: #ffaa00;
-        color: #000;
-        box-shadow: 0 0 10px #ffaa00;
-    }
-    button.mint {
-        border-color: #00aaff;
-        color: #00aaff;
-    }
-    button.mint:hover:not(:disabled) {
-        background: #00aaff;
-        color: #000;
-        box-shadow: 0 0 10px #00aaff;
-    }
-    button.approve {
-        border-color: #ff00ff;
-        color: #ff00ff;
-    }
-    button.approve:hover:not(:disabled) {
-        background: #ff00ff;
-        color: #000;
-        box-shadow: 0 0 10px #ff00ff;
-    }
-    .status {
-        margin: 15px 0;
-        padding: 12px;
-        border-left: 3px solid #003b00;
-        background: #000;
-        font-size: 0.85rem;
-        min-height: 40px;
-        word-break: break-word;
-    }
-    @media (min-width: 640px) {
-        .status { margin: 20px 0; padding: 10px; }
-    }
-    .status.error { border-left-color: #ff0040; color: #ff0040; }
-    .status.success { border-left-color: #00ff41; }
-    .status.pending { border-left-color: #ffaa00; color: #ffaa00; }
-    .status.warning { border-left-color: #ffaa00; color: #ffaa00; }
+        import { createPublicClient, createWalletClient, custom, http, parseAbi, formatEther, parseEther } from 'https://esm.sh/viem@2.21.0';
+        import { sepolia } from 'https://esm.sh/viem@2.21.0/chains';
 
-    canvas {
-        display: block;
-        margin: 15px auto;
-        border: 1px solid #003b00;
-        image-rendering: pixelated;
-        width: 100%;
-        max-width: 512px;
-        height: auto;
-        aspect-ratio: 1 / 1;
-    }
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-        margin-top: 15px;
-    }
-    .stat {
-        border: 1px solid #003b00;
-        padding: 8px;
-        text-align: center;
-        background: #000;
-        min-width: 0;
-        overflow: hidden;
-    }
-    @media (min-width: 640px) {
-        .stat { padding: 10px; }
-    }
-    .stat-value {
-        font-size: 1.2rem;
-        color: #00ff41;
-        text-shadow: 0 0 5px #00ff41;
-        word-break: break-word;
-    }
-    @media (min-width: 640px) {
-        .stat-value { font-size: 1.5rem; }
-    }
-    .stat-label {
-        font-size: 0.6rem;
-        color: #008f11;
-        text-transform: uppercase;
-        word-break: break-word;
-    }
-    @media (min-width: 640px) {
-        .stat-label { font-size: 0.7rem; }
-    }
-    .wallet-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-    .wallet-btn {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-        min-height: 44px;
-    }
-    @media (min-width: 640px) {
-        .wallet-btn { padding: 6px 14px; }
-    }
-    .wallet-btn.small {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-        min-height: 36px;
-    }
-    .connected {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.85rem;
-        flex-wrap: wrap;
-    }
-    @media (min-width: 640px) {
-        .connected { font-size: 0.9rem; }
-    }
-    .dot {
-        width: 8px;
-        height: 8px;
-        background: #00ff41;
-        border-radius: 50%;
-        box-shadow: 0 0 5px #00ff41;
-        animation: pulse 2s infinite;
-        flex-shrink: 0;
-    }
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.5; }
-    }
-    .chain-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 10px;
-        flex-wrap: wrap;
-    }
-    .chain-label {
-        color: #008f11;
-        font-size: 0.75rem;
-    }
-    @media (min-width: 640px) {
-        .chain-label { font-size: 0.8rem; }
-    }
-    .gas-estimate {
-        margin-top: 10px;
-        padding: 10px;
-        border: 1px solid #003b00;
-        background: #000;
-        font-size: 0.85rem;
-        overflow-x: auto;
-    }
-    .gas-estimate.hidden { display: none; }
-    .gas-estimate.error { border-color: #ff0040; }
-    .gas-estimate.warning { border-color: #ffaa00; }
-    .gas-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 4px;
-        flex-wrap: wrap;
-        gap: 4px;
-    }
-    .gas-row:last-child {
-        margin-bottom: 0;
-        padding-top: 4px;
-        border-top: 1px solid #003b00;
-        margin-top: 4px;
-    }
-    .gas-label {
-        color: #008f11;
-        flex-shrink: 0;
-    }
-    .gas-value {
-        color: #00ff41;
-        font-family: monospace;
-        word-break: break-all;
-    }
-    .gas-value.error { color: #ff0040; }
-    .gas-value.warning { color: #ffaa00; }
-    .gas-note {
-        margin-top: 8px;
-        font-size: 0.75rem;
-        color: #ffaa00;
-        border-top: 1px solid #003b00;
-        padding-top: 8px;
-        word-break: break-word;
-    }
-    .token-info {
-        margin: 10px 0;
-        padding: 10px;
-        border: 1px solid #003b00;
-        background: #000;
-    }
-    .token-info-row {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 4px;
-        font-size: 0.85rem;
-    }
-    .token-info-row:last-child {
-        margin-bottom: 0;
-    }
-    .token-info-label {
-        color: #008f11;
-    }
-    .token-info-value {
-        color: #00ff41;
-    }
-    .token-info-value.warning {
-        color: #ffaa00;
-    }
-    .nft-image {
-        width: 100%;
-        max-width: 256px;
-        margin: 10px auto;
-        display: block;
-        border: 1px solid #003b00;
-        image-rendering: pixelated;
-    }
-    .token-input-row {
-        display: flex;
-        gap: 10px;
-        align-items: flex-start;
-    }
-    .token-input-row input {
-        flex: 1;
-        margin-bottom: 0;
-    }
-    .token-input-row button {
-        flex: 0 0 auto;
-    }
-    .step-input-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-    .step-input-row label {
-        color: #008f11;
-        font-size: 0.85rem;
-        white-space: nowrap;
-    }
-    .step-input-row input {
-        flex: 1;
-        margin-bottom: 0;
-        max-width: 100px;
-    }
-    .step-management {
-        margin-top: 15px;
-        padding: 15px;
-        border: 1px solid #003b00;
-        background: #000;
-    }
-    .step-management h3 {
-        color: #00ff41;
-        font-size: 0.9rem;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-    }
-    .step-deposit-row {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
-        align-items: center;
-    }
-    .step-deposit-row input {
-        flex: 1;
-        margin-bottom: 0;
-    }
-    .step-deposit-row button {
-        flex: 0 0 auto;
-        white-space: nowrap;
-    }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>◉ ONCHAIN LIFE NFT</h1>
-        <div class="subtitle">64x64 TOROIDAL GRID // CONWAY'S GAME OF LIFE</div>
+        const ONCHAINLIFE_ADDRESS = '0x9ad46609098235abC6D9f9D680F5590cdf77B2CB';
+        const STEP_TOKEN_ADDRESS = '0x3924BB942434E69674A73Cd0519d3B156C367AB2';
+        const MINT_PRICE = '0.007';
         
-        <div class="box" data-title="Wallet">
-            <div class="box-content">
-                <div id="walletDiv" class="wallet-row">
-                    <button class="wallet-btn" onclick="promptConnect()">CONNECT</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="box" data-title="Contract">
-            <div class="box-content">
-                <div class="chain-row">
-                    <select id="chainSelect" onchange="switchChain()">
-                        <option value="8453" disabled>Base</option>
-                        <option value="1" disabled>Ethereum</option>
-                        <option selected value="11155111">Sepolia</option>
-                    </select>
-                </div>
-                <input type="text" id="contractAddr" placeholder="OnchainLifeNFT contract address" value="0x9ad46609098235abC6D9f9D680F5590cdf77B2CB" oninput="onContractInput()">
-                <input type="text" id="stepTokenAddr" placeholder="STEP Token contract address (ERC20)" value="" oninput="onContractInput()">
-                
-                <div class="button-row">
-                    <button onclick="estimateMintGas()" id="btnEstimateMint" disabled>ESTIMATE MINT</button>
-                    <button onclick="estimateStepGas()" id="btnEstimate" disabled>ESTIMATE STEP</button>
-                </div>
+        const W = 64, H = 64, WORDS = 16;
 
-                <div id="gasEstimate" class="gas-estimate hidden">
-                    <div class="gas-row">
-                        <span class="gas-label">Estimated Gas:</span>
-                        <span class="gas-value" id="gasLimit">-</span>
-                    </div>
-                    <div class="gas-row">
-                        <span class="gas-label">Gas Price:</span>
-                        <span class="gas-value" id="gasPrice">-</span>
-                    </div>
-                    <div class="gas-row">
-                        <span class="gas-label">Est. Cost:</span>
-                        <span class="gas-value" id="gasCost">-</span>
-                    </div>
-                    <div id="gasNote" class="gas-note hidden"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="status" class="status">Ready - Connect your wallet and enter contract addresses</div>
-        
-        <div class="box" data-title="STEP Token Management">
-            <div class="box-content">
-                <div class="token-info">
-                    <div class="token-info-row">
-                        <span class="token-info-label">Wallet STEP Balance:</span>
-                        <span class="token-info-value" id="walletStepBalance">-</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">Deposited on Contract:</span>
-                        <span class="token-info-value" id="depositedStepBalance">-</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">STEP Allowance:</span>
-                        <span class="token-info-value" id="stepAllowanceDisplay">-</span>
-                    </div>
-                </div>
-                
-                <div class="step-management">
-                    <h3>Deposit STEP</h3>
-                    <div class="step-deposit-row">
-                        <input type="number" id="depositAmount" placeholder="Amount to deposit" min="1" step="1">
-                        <button onclick="depositStepToken()" id="btnDepositStep" class="approve">DEPOSIT</button>
-                    </div>
-                    
-                    <h3 style="margin-top: 15px;">Withdraw STEP</h3>
-                    <div class="step-deposit-row">
-                        <input type="number" id="withdrawAmount" placeholder="Amount to withdraw" min="1" step="1">
-                        <button onclick="withdrawStepToken()" id="btnWithdrawStep" class="danger">WITHDRAW</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="box" data-title="Mint New Life">
-            <div class="box-content">
-                <div class="token-info">
-                    <div class="token-info-row">
-                        <span class="token-info-label">Mint Price:</span>
-                        <span class="token-info-value">0.007 ETH</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">Next Token ID:</span>
-                        <span class="token-info-value" id="nextTokenId">-</span>
-                    </div>
-                </div>
-                <div class="button-row">
-                    <button onclick="mintNFT()" id="btnMint" class="mint" disabled>MINT (0.007 ETH)</button>
-                    <button onclick="mintGasKiller()" id="btnMintGasKiller" class="alt" disabled>GAS KILLER MINT</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="box" data-title="View / Evolve Token">
-            <div class="box-content">
-                <div class="token-input-row">
-                    <input type="number" id="tokenId" placeholder="Token ID" min="0" oninput="onTokenInput()">
-                    <button onclick="loadToken()" id="btnLoad" disabled>LOAD</button>
-                </div>
-                
-                <div id="tokenInfo" class="token-info" style="display: none;">
-                    <div class="token-info-row">
-                        <span class="token-info-label">Owner:</span>
-                        <span class="token-info-value" id="tokenOwner">-</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">Generation:</span>
-                        <span class="token-info-value" id="tokenGen">-</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">Live Cells:</span>
-                        <span class="token-info-value" id="tokenLive">-</span>
-                    </div>
-                    <div class="token-info-row">
-                        <span class="token-info-label">Is Owner:</span>
-                        <span class="token-info-value" id="isOwner">-</span>
-                    </div>
-                    <div class="token-info-row" id="stepBalanceRow" style="display: none;">
-                        <span class="token-info-label">Wallet STEP:</span>
-                        <span class="token-info-value" id="stepBalance">-</span>
-                    </div>
-                    <div class="token-info-row" id="depositedBalanceRow" style="display: none;">
-                        <span class="token-info-label">Deposited STEP:</span>
-                        <span class="token-info-value" id="tokenDepositedBalance">-</span>
-                    </div>
-                </div>
-
-                <img id="nftImage" class="nft-image" style="display: none;" alt="NFT Preview">
-                
-                <canvas id="grid" width="512" height="512"></canvas>
-                
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="genDisplay">0</div>
-                        <div class="stat-label">Generation</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="liveDisplay">0</div>
-                        <div class="stat-label">Live Cells</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="tokenIdDisplay">-</div>
-                        <div class="stat-label">Token ID</div>
-                    </div>
-                </div>
-
-                <div class="button-row" style="margin-top: 20px;">
-                    <button onclick="stepLocal()">PREVIEW STEP</button>
-                    <button onclick="toggleAutoStep()" id="btnAuto">PLAY</button>
-                    <button onclick="resetToOnchain()" id="btnReset" disabled>RESET</button>
-                </div>
-                
-                <div id="stepControls" style="display: none; margin-top: 15px;">
-                    <div class="step-input-row">
-                        <label>Generations:</label>
-                        <input type="number" id="stepGenerations" value="1" min="1" max="10" onchange="updateStepCost()">
-                        <span style="color: #008f11; font-size: 0.85rem;">Cost: <span id="stepCostDisplay">1</span> STEP</span>
-                    </div>
-                    <div class="button-row">
-                        <button onclick="stepContract()" id="btnStep" class="danger" disabled>STEP ONCHAIN</button>
-                        <button onclick="stepGasKiller()" id="btnGasKiller" class="alt" disabled>GAS KILLER STEP</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const ABI = [
+        const ONCHAINLIFE_ABI = [
             { name: 'mint', type: 'function', stateMutability: 'payable', inputs: [], outputs: [{ type: 'uint256' }] },
             { name: 'getBoard', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'uint256[16]' }] },
             { name: 'generation', type: 'function', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'uint256' }] },
@@ -608,729 +28,162 @@
             { name: 'withdrawStep', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'uint256' }], outputs: [] },
             { name: 'stepBalances', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }], outputs: [{ type: 'uint256' }] }
         ];
-        
+
         const ERC20_ABI = [
             { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }], outputs: [{ type: 'uint256' }] },
             { name: 'allowance', type: 'function', stateMutability: 'view', inputs: [{ type: 'address' }, { type: 'address' }], outputs: [{ type: 'uint256' }] },
             { name: 'approve', type: 'function', stateMutability: 'nonpayable', inputs: [{ type: 'address' }, { type: 'uint256' }], outputs: [{ type: 'bool' }] }
         ];
-        
-        const PUBLIC_RPCS = {
-            1: 'https://ethereum-rpc.publicnode.com',
-            8453: 'https://base-rpc.publicnode.com',
-            11155111: 'https://ethereum-sepolia-rpc.publicnode.com'
+
+        let publicClient = null, walletClient = null, currentAccount = null, currentChainId = null;
+        let currentTokenId = null, board = new Array(WORDS).fill(0n), isPlaying = false, playInterval = null;
+        let onchainBoard = null, onchainGeneration = 0, generation = 0;
+        let stepTokenAddress = STEP_TOKEN_ADDRESS;
+
+        const els = {
+            connectBtn: document.getElementById('connectBtn'),
+            walletInfo: document.getElementById('walletInfo'),
+            walletAddress: document.getElementById('walletAddress'),
+            walletNetwork: document.getElementById('walletNetwork'),
+            walletInfoSection: document.getElementById('walletInfoSection'),
+            onchainLifeAddress: document.getElementById('onchainLifeAddress'),
+            stepTokenAddress: document.getElementById('stepTokenAddress'),
+            status: document.getElementById('status'),
+            mintBtn: document.getElementById('mintBtn'),
+            tokenInput: document.getElementById('tokenInput'),
+            loadTokenBtn: document.getElementById('loadTokenBtn'),
+            gridCanvas: document.getElementById('gridCanvas'),
+            tokenInfo: document.getElementById('tokenInfo'),
+            generation: document.getElementById('generation'),
+            aliveCount: document.getElementById('aliveCount'),
+            stepInput: document.getElementById('stepInput'),
+            evolveBtn: document.getElementById('evolveBtn'),
+            playStopBtn: document.getElementById('playStopBtn'),
+            stepBtn: document.getElementById('stepBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            stepContractDisplay: document.getElementById('stepContractDisplay'),
+            walletStepBalance: document.getElementById('walletStepBalance'),
+            contractStepBalance: document.getElementById('contractStepBalance'),
+            coinAmount: document.getElementById('coinAmount'),
+            insertBtn: document.getElementById('insertBtn'),
+            refundBtn: document.getElementById('refundBtn')
         };
-        
-        const BLOCK_GAS_LIMIT = 16777216n;
-        const MINT_PRICE_ETH = '0.007';
-        
-        const W = 64, H = 64, WORDS = 16;
-        let board = new Array(WORDS).fill(0n);
-        let generation = 0;
-        let currentTokenId = null;
-        let onchainBoard = null;
-        let onchainGeneration = 0;
-        let viemClients = { public: null, wallet: null };
-        let defaultPublicClient = null;
-        let currentAccount = null;
-        let currentProvider = null;
-        let isPrompting = false;
-        let viemReady = false;
-        let lastGasEstimate = null;
-        let gasEstimateValid = false;
-        let autoStepInterval = null;
-        let isAutoStepping = false;
-        let stepTokenAddress = null;
-        const AUTO_STEP_DELAY = 200;
-        
-        const canvas = document.getElementById('grid');
-        const ctx = canvas.getContext('2d');
-        const CS = canvas.width / W;
-        
-        const availableWallets = [];
-        
-        window.addEventListener('eip6963:announceProvider', (event) => {
-            if (event.detail && event.detail.info && event.detail.provider) {
-                const { info, provider } = event.detail;
-                if (!provider || typeof provider.request !== 'function') return;
-                if (!availableWallets.find(w => w.name === info.name)) {
-                    availableWallets.push({
-                        name: info.name,
-                        provider: provider,
-                        type: 'eip6963'
-                    });
-                }
-            }
-        });
-        
-        function getChainById(id) {
-            if (id === 8453) return window.viem.base;
-            if (id === 11155111) return window.viem.sepolia;
-            return window.viem.mainnet;
-        }
-        
-        function getChainName(id) {
-            if (id === 8453) return 'Base';
-            if (id === 11155111) return 'Sepolia';
-            return 'Ethereum';
-        }
-        
-        function getInjectedProviders() {
-            const providers = [];
-            if (typeof window.ethereum !== 'undefined' && window.ethereum !== null) {
-                if (window.ethereum.providers && Array.isArray(window.ethereum.providers) && window.ethereum.providers.length > 0) {
-                    window.ethereum.providers.forEach(p => {
-                        if (p && typeof p.request === 'function') providers.push(p);
-                    });
-                } else if (window.ethereum && typeof window.ethereum.request === 'function') {
-                    providers.push(window.ethereum);
-                }
-            }
-            return providers;
-        }
-        
-        function identifyProvider(provider) {
-            if (!provider) return null;
-            if (provider.isMetaMask) return { name: 'MetaMask', provider };
-            if (provider.isRabby) return { name: 'Rabby', provider };
-            if (provider.isCoinbaseWallet) return { name: 'Coinbase', provider };
-            if (provider.isRainbow) return { name: 'Rainbow', provider };
-            if (provider.isTrust) return { name: 'Trust', provider };
-            if (provider.isBraveWallet) return { name: 'Brave', provider };
-            if (provider.isPhantom) return { name: 'Phantom', provider };
-            return { name: 'Injected Wallet', provider };
-        }
-        
-        function syncWalletsFromInjected() {
-            const injected = getInjectedProviders();
-            injected.forEach(provider => {
-                const id = identifyProvider(provider);
-                if (id && !availableWallets.find(w => w.name === id.name)) {
-                    availableWallets.push({
-                        name: id.name,
-                        provider: id.provider,
-                        type: 'injected'
-                    });
-                }
-            });
-        }
-        
-        function pollForEthereum() {
-            let attempts = 0;
-            const maxAttempts = 50;
-            const interval = setInterval(() => {
-                attempts++;
-                syncWalletsFromInjected();
-                if (window.ethereum || attempts >= maxAttempts) {
-                    clearInterval(interval);
-                }
-            }, 200);
-        }
-        
-        function createPublicClientForChain(chainId) {
-            const chain = getChainById(chainId);
-            const rpcUrl = PUBLIC_RPCS[chainId];
-            return window.viem.createPublicClient({
-                chain: chain,
-                transport: window.viem.http(rpcUrl)
-            });
-        }
-        
-        function createDefaultClient() {
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            defaultPublicClient = createPublicClientForChain(chainId);
-        }
-        
-        async function fetchStepTokenAddress() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            if (!addr || !addr.startsWith('0x') || addr.length !== 42) return;
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
+
+        async function initPublicClient() {
             try {
-                const tokenAddr = await client.readContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'stepToken'
-                });
-                stepTokenAddress = tokenAddr;
-                document.getElementById('stepTokenAddr').value = tokenAddr;
-                await updateStepBalances();
-            } catch (err) {
-                console.log('Could not fetch step token address');
+                const { rpcUrl } = await fetch('/api/config').then(r => r.json());
+            
+                const transport = http(rpcUrl, { timeout: 15000, fetchOptions: { mode: 'cors' }});
+                publicClient = createPublicClient({ chain: sepolia, transport });
+                await publicClient.getBlockNumber();
+                currentChainId = 11155111;
+                
+                const stepDisplay = document.getElementById('stepContractDisplay');
+                if (stepDisplay) {
+                    stepDisplay.textContent = `${STEP_TOKEN_ADDRESS.slice(0,6)}...${STEP_TOKEN_ADDRESS.slice(-4)}`;
+                    stepDisplay.title = STEP_TOKEN_ADDRESS;
+                }
+                
+                stepTokenAddress = STEP_TOKEN_ADDRESS;
+
+                els.onchainLifeAddress.textContent = `${ONCHAINLIFE_ADDRESS.slice(0,6)}...${ONCHAINLIFE_ADDRESS.slice(-4)}`;
+                els.onchainLifeAddress.title = ONCHAINLIFE_ADDRESS;
+                els.stepTokenAddress.textContent = `${STEP_TOKEN_ADDRESS.slice(0,6)}...${STEP_TOKEN_ADDRESS.slice(-4)}`;
+                els.stepTokenAddress.title = STEP_TOKEN_ADDRESS;
+                
+                updateStatus('Connect wallet to begin', 'info');
+            } catch (e) { 
+                console.error('RPC connection failed:', e);
+                updateStatus('RPC connection failed', 'error');
             }
         }
-        
-        async function updateStepBalances() {
-            if (!currentAccount || !stepTokenAddress) return;
-            
-            const addr = document.getElementById('contractAddr').value.trim();
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
+
+        async function connectWallet() {
+            if (!window.ethereum) { updateStatus('Install MetaMask', 'error'); return; }
             try {
-                const [walletBalance, depositedBalance, allowance] = await Promise.all([
-                    client.readContract({
-                        address: stepTokenAddress,
-                        abi: ERC20_ABI,
-                        functionName: 'balanceOf',
-                        args: [currentAccount]
-                    }),
-                    client.readContract({
-                        address: addr,
-                        abi: ABI,
-                        functionName: 'stepBalances',
-                        args: [currentAccount]
-                    }),
-                    client.readContract({
-                        address: stepTokenAddress,
-                        abi: ERC20_ABI,
-                        functionName: 'allowance',
-                        args: [currentAccount, addr]
-                    })
+                walletClient = createWalletClient({ chain: sepolia, transport: custom(window.ethereum) });
+                const accounts = await walletClient.requestAddresses();
+                if (accounts.length === 0) return;
+                currentAccount = accounts[0];
+                currentChainId = await walletClient.getChainId();
+                
+                els.walletAddress.textContent = `${currentAccount.slice(0,6)}...${currentAccount.slice(-4)}`;
+                els.walletNetwork.textContent = getNetworkName(currentChainId);
+                els.walletInfo.classList.remove('hidden');
+                els.walletInfoSection.classList.remove('hidden');
+                els.connectBtn.innerHTML = '&#8617;';
+                els.connectBtn.classList.add('connected', 'disconnect-btn');
+
+                await updateTokenBalances();
+                updateStatus('Wallet connected', 'success');
+                
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', handleChainChanged);
+            } catch (e) { 
+                updateStatus('Connection failed', 'error'); 
+            }
+        }
+
+        function disconnectWallet() {
+            currentAccount = null;
+            stopPlayback();
+            els.walletInfo.classList.add('hidden');
+            els.walletInfoSection.classList.add('hidden');
+            els.connectBtn.textContent = 'START';
+            els.connectBtn.classList.remove('connected', 'disconnect-btn');
+            updateStatus('Disconnected', 'info');
+        }
+
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) disconnectWallet();
+            else { 
+                currentAccount = accounts[0]; 
+                els.walletAddress.textContent = `${currentAccount.slice(0,6)}...${currentAccount.slice(-4)}`; 
+                updateTokenBalances(); 
+            }
+        }
+
+        async function handleChainChanged(chainId) {
+            currentChainId = parseInt(chainId, 16);
+            els.walletNetwork.textContent = getNetworkName(currentChainId);
+            await updateTokenBalances();
+        }
+
+        function getNetworkName(chainId) {
+            switch (chainId) { case 1: return 'ETH'; case 8453: return 'BASE'; case 11155111: return 'SEP'; default: return '?'; }
+        }
+
+        async function updateTokenBalances() {
+            if (!currentAccount || !publicClient) return;
+            try {
+                const [walletBal, contractBal] = await Promise.all([
+                    publicClient.readContract({ address: STEP_TOKEN_ADDRESS, abi: ERC20_ABI, functionName: 'balanceOf', args: [currentAccount] }),
+                    publicClient.readContract({ address: ONCHAINLIFE_ADDRESS, abi: ONCHAINLIFE_ABI, functionName: 'stepBalances', args: [currentAccount] })
                 ]);
-                
-                document.getElementById('walletStepBalance').textContent = window.viem.formatEther(walletBalance);
-                document.getElementById('depositedStepBalance').textContent = window.viem.formatEther(depositedBalance);
-                document.getElementById('stepAllowanceDisplay').textContent = window.viem.formatEther(allowance);
-                
-                // Update token info section if visible
-                document.getElementById('stepBalance').textContent = window.viem.formatEther(walletBalance);
-                document.getElementById('tokenDepositedBalance').textContent = window.viem.formatEther(depositedBalance);
-                
-            } catch (err) {
-                console.error('Error fetching STEP balances:', err);
+                els.walletStepBalance.textContent = parseFloat(formatEther(walletBal)).toFixed(2);
+                els.contractStepBalance.textContent = parseFloat(formatEther(contractBal)).toFixed(2);
+            } catch (e) {
+                console.error('Balance update error:', e);
             }
         }
-        
-        function onContractInput() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const isValid = addr && addr.startsWith('0x') && addr.length === 42;
-            
-            document.getElementById('btnEstimate').disabled = !isValid;
-            document.getElementById('btnEstimateMint').disabled = !isValid;
-            document.getElementById('btnMint').disabled = !(isValid && currentAccount);
-            document.getElementById('btnMintGasKiller').disabled = !(isValid && currentAccount);
-            
-            if (isValid) {
-                loadNextTokenId();
-                fetchStepTokenAddress();
-            }
-        }
-        
-        function onTokenInput() {
-            const tokenId = document.getElementById('tokenId').value;
-            document.getElementById('btnLoad').disabled = !tokenId;
-        }
-        
-        function updateStepCost() {
-            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-            document.getElementById('stepCostDisplay').textContent = gens;
-        }
-        
-        async function checkStepTokenApproval() {
-            if (!currentAccount || !stepTokenAddress) return;
-            
-            const addr = document.getElementById('contractAddr').value.trim();
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            try {
-                const [balance, allowance, deposited] = await Promise.all([
-                    client.readContract({
-                        address: stepTokenAddress,
-                        abi: ERC20_ABI,
-                        functionName: 'balanceOf',
-                        args: [currentAccount]
-                    }),
-                    client.readContract({
-                        address: stepTokenAddress,
-                        abi: ERC20_ABI,
-                        functionName: 'allowance',
-                        args: [currentAccount, addr]
-                    }),
-                    client.readContract({
-                        address: addr,
-                        abi: ABI,
-                        functionName: 'stepBalances',
-                        args: [currentAccount]
-                    })
-                ]);
-                
-                const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-                const required = BigInt(gens);
-                
-                document.getElementById('stepBalance').textContent = window.viem.formatEther(balance);
-                document.getElementById('tokenDepositedBalance').textContent = window.viem.formatEther(deposited);
-                
-                const hasEnoughDeposited = deposited >= required;
-                
-                document.getElementById('stepBalance').className = hasEnoughDeposited ? 'token-info-value' : 'token-info-value warning';
-                
-                updateStepButton();
-                
-            } catch (err) {
-                console.error('Error checking token approval:', err);
-            }
-        }
-        
-        function updateStepButton() {
-            const btnStep = document.getElementById('btnStep');
-            const btnGasKiller = document.getElementById('btnGasKiller');
-            const btnReset = document.getElementById('btnReset');
-            
-            const hasToken = currentTokenId !== null;
-            const isOwner = hasToken && document.getElementById('isOwner').textContent === 'Yes';
-            
-            btnGasKiller.disabled = !(hasToken && currentAccount && isOwner);
-            btnStep.disabled = !(hasToken && currentAccount && isOwner && gasEstimateValid);
-            btnReset.disabled = !hasToken;
-        }
-        
-        function formatGasLimit(gas) {
-            if (gas > 1000000n) {
-                return (Number(gas) / 1000000).toFixed(2) + 'M';
-            } else if (gas > 1000n) {
-                return (Number(gas) / 1000).toFixed(1) + 'k';
-            }
-            return gas.toString();
-        }
-        
-        async function loadNextTokenId() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            if (!addr) return;
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            try {
-                const nextId = await client.readContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'nextTokenId'
-                });
-                document.getElementById('nextTokenId').textContent = nextId.toString();
-            } catch (err) {
-                document.getElementById('nextTokenId').textContent = 'Error';
-            }
-        }
-        
-        async function estimateMintGas() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const gasDiv = document.getElementById('gasEstimate');
-            const gasNote = document.getElementById('gasNote');
-            
-            if (!addr || !addr.startsWith('0x') || addr.length !== 42) {
-                gasDiv.classList.add('hidden');
-                return;
-            }
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            try {
-                const gasLimit = await client.estimateContractGas({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'mint',
-                    args: [],
-                    account: currentAccount || '0x0000000000000000000000000000000000000000',
-                    value: window.viem.parseEther(MINT_PRICE_ETH)
-                });
-                
-                const gasPrice = await client.getGasPrice();
-                const totalCost = (gasLimit * gasPrice) + window.viem.parseEther(MINT_PRICE_ETH);
-                
-                document.getElementById('gasLimit').textContent = formatGasLimit(gasLimit);
-                document.getElementById('gasLimit').className = 'gas-value';
-                document.getElementById('gasPrice').textContent = (Number(gasPrice) / 1e9).toFixed(2) + ' gwei';
-                document.getElementById('gasCost').textContent = window.viem.formatEther(totalCost).substring(0, 10) + ' ETH';
-                document.getElementById('gasCost').className = 'gas-value';
-                
-                gasDiv.classList.remove('hidden', 'error', 'warning');
-                gasNote.innerHTML = 'Includes <span style="color: #00aaff">0.007 ETH</span> mint price';
-                gasNote.classList.remove('hidden');
-                
-            } catch (err) {
-                document.getElementById('gasLimit').textContent = 'Failed';
-                document.getElementById('gasLimit').className = 'gas-value error';
-                document.getElementById('gasPrice').textContent = '-';
-                document.getElementById('gasCost').textContent = '-';
-                gasDiv.classList.add('error');
-                gasNote.textContent = '⚠️ ' + (err.message || 'Gas estimation failed');
-                gasNote.classList.remove('hidden');
-                gasDiv.classList.remove('hidden');
-            }
-        }
-        
-        async function estimateStepGas() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const tokenId = document.getElementById('tokenId').value;
-            const gasDiv = document.getElementById('gasEstimate');
-            const gasNote = document.getElementById('gasNote');
-            
-            if (!addr || !addr.startsWith('0x') || addr.length !== 42 || !tokenId) {
-                gasDiv.classList.add('hidden');
-                gasEstimateValid = false;
-                updateStepButton();
-                return;
-            }
-            
-            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            try {
-                const gasLimit = await client.estimateContractGas({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'step',
-                    args: [BigInt(tokenId), gens],
-                    account: currentAccount || '0x0000000000000000000000000000000000000000'
-                });
-                
-                const gasPrice = await client.getGasPrice();
-                const totalCost = gasLimit * gasPrice;
-                
-                lastGasEstimate = { gasLimit, gasPrice, totalCost };
-                gasEstimateValid = gasLimit <= BLOCK_GAS_LIMIT;
-                
-                document.getElementById('gasLimit').textContent = formatGasLimit(gasLimit);
-                document.getElementById('gasLimit').className = 'gas-value' + (gasEstimateValid ? '' : ' error');
-                document.getElementById('gasPrice').textContent = (Number(gasPrice) / 1e9).toFixed(2) + ' gwei';
-                document.getElementById('gasCost').textContent = window.viem.formatEther(totalCost).substring(0, 8) + ' ETH';
-                document.getElementById('gasCost').className = 'gas-value' + (gasEstimateValid ? '' : ' error');
-                
-                const stepCost = gens;
-                
-                if (!gasEstimateValid) {
-                    gasDiv.classList.add('error');
-                    gasNote.innerHTML = `⚠️ Gas limit exceeds block maximum. Use GAS KILLER STEP.<br>Requires <span style="color: #ff00ff">${stepCost} STEP</span> from deposited balance.`;
-                    gasNote.classList.remove('hidden');
-                } else {
-                    gasDiv.classList.remove('error', 'warning');
-                    gasNote.innerHTML = `Requires <span style="color: #ff00ff">${stepCost} STEP</span> from deposited balance`;
-                    gasNote.classList.remove('hidden');
-                }
-                
-                gasDiv.classList.remove('hidden');
-                
-            } catch (err) {
-                gasEstimateValid = false;
-                document.getElementById('gasLimit').textContent = 'Failed';
-                document.getElementById('gasLimit').className = 'gas-value error';
-                document.getElementById('gasPrice').textContent = '-';
-                document.getElementById('gasCost').textContent = '-';
-                gasDiv.classList.add('error');
-                gasNote.textContent = '⚠️ Gas estimation failed: ' + (err.message || 'Unknown error');
-                gasNote.classList.remove('hidden');
-                gasDiv.classList.remove('hidden');
-            }
-            
-            updateStepButton();
-        }
-        
-        async function approveStepToken() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const stepAddr = document.getElementById('stepTokenAddr').value.trim();
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !stepAddr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token address</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-            const amount = BigInt(gens) * BigInt(1e18);
-            
-            statusEl.textContent = 'Approving STEP tokens...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const hash = await viemClients.wallet.writeContract({
-                    address: stepAddr,
-                    abi: ERC20_ABI,
-                    functionName: 'approve',
-                    args: [addr, amount]
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for approval: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens approved!</span>';
-                statusEl.className = 'status success';
-                
-                await checkStepTokenApproval();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Approval failed: ' + escapeHtml(err.message) + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function depositStepToken() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const stepAddr = document.getElementById('stepTokenAddr').value.trim();
-            const amount = document.getElementById('depositAmount').value;
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !addr || !stepAddr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or addresses not set</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            if (!amount || parseFloat(amount) <= 0) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Enter a valid amount</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            const depositAmount = window.viem.parseEther(amount);
-            
-            statusEl.textContent = 'Checking allowance...';
-            statusEl.className = 'status pending';
-            
-            try {
-                // First check allowance
-                const allowance = await viemClients.public.readContract({
-                    address: stepAddr,
-                    abi: ERC20_ABI,
-                    functionName: 'allowance',
-                    args: [currentAccount, addr]
-                });
-                
-                // If allowance is insufficient, approve first
-                if (allowance < depositAmount) {
-                    statusEl.textContent = 'Approving STEP tokens...';
-                    
-                    const approveHash = await viemClients.wallet.writeContract({
-                        address: stepAddr,
-                        abi: ERC20_ABI,
-                        functionName: 'approve',
-                        args: [addr, depositAmount]
-                    });
-                    
-                    statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for approval: ' + approveHash.slice(0, 18) + '...</span>';
-                    await viemClients.public.waitForTransactionReceipt({ hash: approveHash });
-                }
-                
-                // Now deposit
-                statusEl.textContent = 'Depositing STEP tokens...';
-                
-                const hash = await viemClients.wallet.writeContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'depositStep',
-                    args: [depositAmount]
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for deposit: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens deposited!</span>';
-                statusEl.className = 'status success';
-                
-                document.getElementById('depositAmount').value = '';
-                await updateStepBalances();
-                await checkStepTokenApproval();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Deposit failed: ' + escapeHtml(err.message) + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function withdrawStepToken() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const amount = document.getElementById('withdrawAmount').value;
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !addr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or contract address not set</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            if (!amount || parseFloat(amount) <= 0) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Enter a valid amount</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            const withdrawAmount = window.viem.parseEther(amount);
-            
-            statusEl.textContent = 'Withdrawing STEP tokens...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const hash = await viemClients.wallet.writeContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'withdrawStep',
-                    args: [withdrawAmount]
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for withdrawal: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">STEP tokens withdrawn!</span>';
-                statusEl.className = 'status success';
-                
-                document.getElementById('withdrawAmount').value = '';
-                await updateStepBalances();
-                await checkStepTokenApproval();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Withdrawal failed: ' + escapeHtml(err.message) + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function mintNFT() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !addr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            statusEl.textContent = 'Minting NFT (0.007 ETH)...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const hash = await viemClients.wallet.writeContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'mint',
-                    args: [],
-                    value: window.viem.parseEther(MINT_PRICE_ETH)
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
-                
-                const receipt = await viemClients.public.waitForTransactionReceipt({ hash });
-                const tokenId = parseInt(receipt.logs[0].topics[3], 16);
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">NFT Minted! Token #' + tokenId + '</span>';
-                statusEl.className = 'status success';
-                
-                document.getElementById('tokenId').value = tokenId;
-                loadNextTokenId();
-                await loadToken();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message || 'Mint failed') + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function mintGasKiller() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const statusEl = document.getElementById('status');
-            
-            if (!viemClients.wallet || !addr) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            statusEl.textContent = 'Submitting mint to Gas Killer...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const blockNumber = await client.getBlockNumber();
-                
-                const callData = window.viem.encodeFunctionData({
-                    abi: ABI,
-                    functionName: 'mint',
-                    args: []
-                });
-                
-                const callDataBytes = [];
-                for (let i = 2; i < callData.length; i += 2) {
-                    callDataBytes.push(parseInt(callData.substr(i, 2), 16));
-                }
-                
-                const submitRes = await fetch('/api/gas-killer/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        target_address: addr,
-                        from_address: currentAccount,
-                        call_data: callDataBytes,
-                        value: '0x' + window.viem.parseEther(MINT_PRICE_ETH).toString(16),
-                        block_height: Number(blockNumber)
-                    }),
-                });
-                
-                if (!submitRes.ok) {
-                    const errorData = await submitRes.json();
-                    throw new Error(`${errorData.error?.code}: ${errorData.error?.message}`);
-                }
-                
-                const { task_id } = await submitRes.json();
-                statusEl.textContent = `Gas Killer task ${task_id.substring(0, 8)}... submitted, polling...`;
-                
-                const payload = await pollGasKillerTask(task_id);
-                
-                statusEl.textContent = 'Executing optimized mint...';
-                
-                const hash = await viemClients.wallet.sendTransaction({
-                    to: payload.to,
-                    data: payload.data,
-                    value: BigInt(payload.value),
-                    gas: BigInt(payload.estimated_gas),
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
-                
-                const receipt = await viemClients.public.waitForTransactionReceipt({ hash });
-                const tokenId = parseInt(receipt.logs[0].topics[3], 16);
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">NFT Minted via Gas Killer! Token #' + tokenId + '</span>';
-                statusEl.className = 'status success';
-                
-                document.getElementById('tokenId').value = tokenId;
-                loadNextTokenId();
-                await loadToken();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Gas Killer failed: ' + escapeHtml(err.message) + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
+
         async function loadToken() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const tokenId = document.getElementById('tokenId').value;
-            const statusEl = document.getElementById('status');
-            
-            if (!addr || !tokenId) return;
-            
-            currentTokenId = parseInt(tokenId);
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            statusEl.textContent = 'Loading token #' + tokenId + '...';
-            statusEl.className = 'status pending';
+            if (!publicClient) { updateStatus('RPC not ready', 'error'); return; }
+            const tokenId = els.tokenInput.value.trim();
+            if (!tokenId || isNaN(tokenId) || parseInt(tokenId) < 0) {
+                updateStatus('Enter valid token ID', 'error');
+                return;
+            }
             
             try {
+                els.loadTokenBtn.disabled = true;
+                els.loadTokenBtn.textContent = '...';
+                currentTokenId = parseInt(tokenId);
+                
                 const [boardData, genData, owner] = await Promise.all([
-                    client.readContract({ address: addr, abi: ABI, functionName: 'getBoard', args: [BigInt(tokenId)] }),
-                    client.readContract({ address: addr, abi: ABI, functionName: 'generation', args: [BigInt(tokenId)] }),
-                    client.readContract({ address: addr, abi: ABI, functionName: 'ownerOf', args: [BigInt(tokenId)] }).catch(() => '0x0')
+                    publicClient.readContract({ address: ONCHAINLIFE_ADDRESS, abi: ONCHAINLIFE_ABI, functionName: 'getBoard', args: [BigInt(tokenId)] }),
+                    publicClient.readContract({ address: ONCHAINLIFE_ADDRESS, abi: ONCHAINLIFE_ABI, functionName: 'generation', args: [BigInt(tokenId)] }),
+                    publicClient.readContract({ address: ONCHAINLIFE_ADDRESS, abi: ONCHAINLIFE_ABI, functionName: 'ownerOf', args: [BigInt(tokenId)] }).catch(() => '0x0')
                 ]);
                 
                 board = boardData.map(n => BigInt(n.toString()));
@@ -1338,636 +191,1517 @@
                 generation = Number(genData.toString());
                 onchainGeneration = generation;
                 
-                const isOwner = currentAccount && owner.toLowerCase() === currentAccount.toLowerCase();
+                els.generation.textContent = generation;
+                els.aliveCount.textContent = '-';
                 
-                document.getElementById('tokenInfo').style.display = 'block';
-                document.getElementById('tokenOwner').textContent = owner.slice(0, 6) + '...' + owner.slice(-4);
-                document.getElementById('tokenGen').textContent = generation;
-                document.getElementById('isOwner').textContent = isOwner ? 'Yes' : 'No';
+                renderGrid();
+                updateAliveCount();
                 
-                if (isOwner) {
-                    document.getElementById('stepControls').style.display = 'block';
-                    document.getElementById('stepBalanceRow').style.display = 'flex';
-                    document.getElementById('depositedBalanceRow').style.display = 'flex';
-                    await checkStepTokenApproval();
-                } else {
-                    document.getElementById('stepControls').style.display = 'none';
-                    document.getElementById('stepBalanceRow').style.display = 'none';
-                    document.getElementById('depositedBalanceRow').style.display = 'none';
-                }
-                
-                try {
-                    const tokenUri = await client.readContract({ address: addr, abi: ABI, functionName: 'tokenURI', args: [BigInt(tokenId)] });
-                    const base64Json = tokenUri.replace('data:application/json;base64,', '');
-                    const jsonStr = atob(base64Json);
-                    const metadata = JSON.parse(jsonStr);
-                    const imgEl = document.getElementById('nftImage');
-                    imgEl.src = metadata.image;
-                    imgEl.style.display = 'block';
-                } catch (e) {
-                    document.getElementById('nftImage').style.display = 'none';
-                }
-                
-                draw();
-                updateStats();
-                estimateStepGas();
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">Token #' + tokenId + ' loaded</span>';
-                statusEl.className = 'status success';
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(err.message || 'Failed to load token') + '</span>';
-                statusEl.className = 'status error';
-                currentTokenId = null;
-                document.getElementById('tokenInfo').style.display = 'none';
-                document.getElementById('stepControls').style.display = 'none';
-                document.getElementById('nftImage').style.display = 'none';
-            }
-            
-            updateStepButton();
-        }
-        
-        async function stepGasKiller() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const tokenId = currentTokenId;
-            const statusEl = document.getElementById('status');
-            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-            
-            if (!viemClients.wallet || !addr || tokenId === null) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token selected</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            const chainId = parseInt(document.getElementById('chainSelect').value);
-            const client = viemClients.public || createPublicClientForChain(chainId);
-            
-            statusEl.textContent = 'Submitting step to Gas Killer...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const blockNumber = await client.getBlockNumber();
-                
-                const callData = window.viem.encodeFunctionData({
-                    abi: ABI,
-                    functionName: 'step',
-                    args: [BigInt(tokenId), gens]
-                });
-                
-                const callDataBytes = [];
-                for (let i = 2; i < callData.length; i += 2) {
-                    callDataBytes.push(parseInt(callData.substr(i, 2), 16));
-                }
-                
-                const submitRes = await fetch('/api/gas-killer/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        target_address: addr,
-                        from_address: currentAccount,
-                        call_data: callDataBytes,
-                        value: '0x0',
-                        block_height: Number(blockNumber)
-                    }),
-                });
-                
-                if (!submitRes.ok) {
-                    const errorData = await submitRes.json();
-                    throw new Error(`${errorData.error?.code}: ${errorData.error?.message}`);
-                }
-                
-                const { task_id } = await submitRes.json();
-                statusEl.textContent = `Gas Killer task ${task_id.substring(0, 8)}... submitted, polling...`;
-                
-                const payload = await pollGasKillerTask(task_id);
-                
-                statusEl.textContent = 'Executing optimized step...';
-                
-                const hash = await viemClients.wallet.sendTransaction({
-                    to: payload.to,
-                    data: payload.data,
-                    value: BigInt(payload.value),
-                    gas: BigInt(payload.estimated_gas),
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">Step executed via Gas Killer!</span>';
-                await loadToken();
-                
-            } catch (err) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Gas Killer failed: ' + escapeHtml(err.message) + '</span>';
-                statusEl.className = 'status error';
+                updateStatus(`Token #${tokenId} loaded`, 'success');
+            } catch (e) { 
+                console.error('Load token error:', e);
+                updateStatus('Token not found or error loading', 'error'); 
+            } finally {
+                els.loadTokenBtn.disabled = false;
+                els.loadTokenBtn.textContent = 'LOAD';
             }
         }
-        
-        async function pollGasKillerTask(taskId) {
-            const maxAttempts = 15;
-            let attempts = 0;
-            
-            while (attempts < maxAttempts) {
-                attempts++;
-                const res = await fetch(`/api/gas-killer/task/${taskId}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({})
-                });
-                
-                if (!res.ok) {
-                    const errorData = await res.json();
-                    throw new Error(`${errorData.error?.code}: ${errorData.error?.message}`);
-                }
-                
-                const task = await res.json();
-                
-                if (task.status === 'ready') return task.payload;
-                if (task.status === 'failed' || task.status === 'expired') {
-                    throw new Error(`Task ${task.status}: ${task.error}`);
-                }
-                
-                const statusEl = document.getElementById('status');
-                statusEl.textContent = `Gas Killer processing... (${attempts}/${maxAttempts})`;
-                
-                await new Promise(r => setTimeout(r, 7000));
-            }
-            
-            throw new Error('Gas Killer polling timeout');
-        }
-        
-        async function stepContract() {
-            const addr = document.getElementById('contractAddr').value.trim();
-            const tokenId = currentTokenId;
-            const statusEl = document.getElementById('status');
-            const gens = parseInt(document.getElementById('stepGenerations').value) || 1;
-            
-            if (!viemClients.wallet || !addr || tokenId === null) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not connected or no token selected</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            if (!gasEstimateValid) {
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Gas limit exceeded. Use GAS KILLER STEP.</span>';
-                statusEl.className = 'status warning';
-                return;
-            }
-            
-            statusEl.textContent = 'Sending transaction...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const hash = await viemClients.wallet.writeContract({
-                    address: addr,
-                    abi: ABI,
-                    functionName: 'step',
-                    args: [BigInt(tokenId), gens]
-                });
-                
-                statusEl.innerHTML = '<span style="color: #ffaa00;">Waiting for confirmation: ' + hash.slice(0, 18) + '...</span>';
-                
-                await viemClients.public.waitForTransactionReceipt({ hash });
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">Transaction confirmed!</span>';
-                await loadToken();
-                await updateStepBalances();
-                
-            } catch (err) {
-                let msg = err.message || 'Transaction failed';
-                if (msg.includes('rejected') || err.code === 4001) msg = 'Transaction rejected by user';
-                else if (msg.includes('Not owner')) msg = 'Not owner of this token';
-                else if (msg.includes('Not enough steps')) msg = 'Not enough deposited STEP balance';
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
-                statusEl.className = 'status error';
-            }
-        }
-        
-        async function switchChain() {
-            if (!viemReady) return;
-            
-            const newChainId = parseInt(document.getElementById('chainSelect').value);
-            const newChain = getChainById(newChainId);
-            
-            createDefaultClient();
-            estimateStepGas();
-            
-            if (currentProvider && currentAccount) {
-                const statusEl = document.getElementById('status');
-                statusEl.textContent = 'Requesting chain switch...';
-                statusEl.className = 'status pending';
-                
-                try {
-                    await currentProvider.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x' + newChainId.toString(16) }]
-                    });
-                    
-                    viemClients.public = createPublicClientForChain(newChainId);
-                    viemClients.wallet = window.viem.createWalletClient({ 
-                        account: currentAccount,
-                        chain: newChain, 
-                        transport: window.viem.custom(currentProvider)
-                    });
-                    
-                    statusEl.innerHTML = '<span style="color: #00ff41;">Switched to ' + getChainName(newChainId) + '</span>';
-                    statusEl.className = 'status success';
-                    loadNextTokenId();
-                    fetchStepTokenAddress();
-                    
-                } catch (err) {
-                    if (err.code === 4902) {
-                        try {
-                            await currentProvider.request({
-                                method: 'wallet_addEthereumChain',
-                                params: [{
-                                    chainId: '0x' + newChainId.toString(16),
-                                    chainName: newChain.name,
-                                    nativeCurrency: newChain.nativeCurrency,
-                                    rpcUrls: [PUBLIC_RPCS[newChainId]],
-                                    blockExplorerUrls: newChain.blockExplorers ? [newChain.blockExplorers.default.url] : []
-                                }]
-                            });
-                            await currentProvider.request({
-                                method: 'wallet_switchEthereumChain',
-                                params: [{ chainId: '0x' + newChainId.toString(16) }]
-                            });
-                            loadNextTokenId();
-                            fetchStepTokenAddress();
-                        } catch (addErr) {
-                            statusEl.innerHTML = '<span style="color: #ff0040;">Failed to add chain</span>';
-                            statusEl.className = 'status error';
-                        }
-                    } else {
-                        statusEl.innerHTML = '<span style="color: #ffaa00;">Chain switch rejected</span>';
-                        statusEl.className = 'status pending';
-                    }
-                }
-            }
-        }
-        
-        function init() {
-            viemReady = true;
-            createDefaultClient();
-            clearGrid();
-            
-            pollForEthereum();
-            syncWalletsFromInjected();
-            window.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
-            
-            onContractInput();
-            
-            document.getElementById('status').textContent = 'Ready - connect wallet';
-        }
-        
-        if (window.viem) {
-            init();
-        } else {
-            window.addEventListener('viem:ready', init);
-            setTimeout(() => {
-                if (!viemReady) {
-                    document.getElementById('status').innerHTML = '<span style="color: #ff0040;">Failed to load viem</span>';
-                    document.getElementById('status').className = 'status error';
-                }
-            }, 15000);
-        }
-        
-        async function promptConnect() {
-            if (isPrompting) return;
-            isPrompting = true;
-            
-            const div = document.getElementById('walletDiv');
-            const status = document.getElementById('status');
-            
-            if (!viemReady) {
-                status.innerHTML = '<span style="color: #ff0040;">Libraries still loading...</span>';
-                status.className = 'status pending';
-                isPrompting = false;
-                return;
-            }
-            
-            div.innerHTML = '<span style="color: #008f11; font-size: 0.85rem;">Detecting wallets...</span>';
-            status.textContent = 'Scanning for available wallets...';
-            status.className = 'status pending';
-            
-            syncWalletsFromInjected();
-            window.dispatchEvent(new CustomEvent('eip6963:requestProvider'));
-            await new Promise(resolve => setTimeout(resolve, 500));
-            syncWalletsFromInjected();
-            
-            if (availableWallets.length === 0) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                syncWalletsFromInjected();
-            }
-            
-            if (availableWallets.length === 0) {
-                status.innerHTML = '<span style="color: #ff0040;">No wallet found. Install MetaMask.</span>';
-                status.className = 'status error';
-                cancelPrompt();
-                isPrompting = false;
-                return;
-            }
-            
-            if (availableWallets.length === 1) {
-                isPrompting = false;
-                await doConnect(0);
-                return;
-            }
-            
-            let html = '<span style="color: #008f11; font-size: 0.85rem;">Select wallet:</span>';
-            availableWallets.forEach((w, i) => {
-                html += '<button class="wallet-btn small" onclick="doConnect(' + i + ')">' + escapeHtml(w.name) + '</button>';
-            });
-            html += '<button class="wallet-btn small" onclick="cancelPrompt()" style="border-color: #003b00; color: #008f11;">Cancel</button>';
-            
-            div.innerHTML = html;
-            status.textContent = 'Select a wallet to connect';
-            status.className = 'status';
-            isPrompting = false;
-        }
-        
-        function cancelPrompt() {
-            if (currentAccount) return;
-            const div = document.getElementById('walletDiv');
-            div.innerHTML = '<button class="wallet-btn" onclick="promptConnect()">CONNECT WALLET</button>';
-            const status = document.getElementById('status');
-            status.textContent = 'Ready - click Connect to select wallet';
-            status.className = 'status';
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = String(text);
-            return div.innerHTML;
-        }
-        
-        async function doConnect(index) {
-            const wallet = availableWallets[index];
-            const statusEl = document.getElementById('status');
-            
-            if (!wallet) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Wallet not found</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            if (!viemReady) {
-                statusEl.innerHTML = '<span style="color: #ff0040;">Libraries not loaded yet</span>';
-                statusEl.className = 'status error';
-                return;
-            }
-            
-            statusEl.textContent = 'Connecting to ' + wallet.name + '...';
-            statusEl.className = 'status pending';
-            
-            try {
-                const provider = wallet.provider;
-                currentProvider = provider;
-                
-                const accounts = await provider.request({ method: 'eth_requestAccounts' });
-                
-                if (!accounts || accounts.length === 0) {
-                    throw new Error('No accounts returned');
-                }
-                
-                currentAccount = accounts[0];
-                
-                const chainIdHex = await provider.request({ method: 'eth_chainId' });
-                const chainId = parseInt(chainIdHex, 16);
-                
-                document.getElementById('chainSelect').value = String(chainId);
-                
-                const chain = getChainById(chainId);
-                
-                viemClients.public = createPublicClientForChain(chainId);
-                viemClients.wallet = window.viem.createWalletClient({ 
-                    account: currentAccount,
-                    chain: chain, 
-                    transport: window.viem.custom(provider)
-                });
-                
-                onContractInput();
-                
-                const div = document.getElementById('walletDiv');
-                div.innerHTML = '<div class="connected"><span class="dot"></span><span>' + 
-                    currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4) + 
-                    '</span><button class="wallet-btn small" onclick="disconnect()">Disconnect</button></div>';
-                
-                statusEl.innerHTML = '<span style="color: #00ff41;">Connected to ' + escapeHtml(wallet.name) + '</span>';
-                statusEl.className = 'status success';
-                
-                updateStepButton();
-                await updateStepBalances();
-                
-                if (typeof provider.on === 'function') {
-                    provider.on('accountsChanged', (newAccounts) => {
-                        if (!newAccounts || newAccounts.length === 0) {
-                            disconnect();
-                        } else {
-                            currentAccount = newAccounts[0];
-                            const span = document.querySelector('.connected span:nth-child(2)');
-                            if (span) span.textContent = currentAccount.slice(0, 6) + '...' + currentAccount.slice(-4);
-                            onContractInput();
-                            if (currentTokenId !== null) loadToken();
-                            updateStepBalances();
-                        }
-                    });
-                    
-                    provider.on('chainChanged', (newChainIdHex) => {
-                        const newChainId = parseInt(newChainIdHex, 16);
-                        document.getElementById('chainSelect').value = String(newChainId);
-                        const newChain = getChainById(newChainId);
-                        viemClients.public = createPublicClientForChain(newChainId);
-                        viemClients.wallet = window.viem.createWalletClient({ 
-                            account: currentAccount,
-                            chain: newChain, 
-                            transport: window.viem.custom(provider)
-                        });
-                        onContractInput();
-                        loadNextTokenId();
-                        fetchStepTokenAddress();
-                    });
-                    
-                    provider.on('disconnect', () => disconnect());
-                }
-                
-            } catch (err) {
-                let msg = err.message || 'Unknown error';
-                if (msg.includes('rejected') || err.code === 4001) msg = 'Connection rejected by user';
-                statusEl.innerHTML = '<span style="color: #ff0040;">Error: ' + escapeHtml(msg) + '</span>';
-                statusEl.className = 'status error';
-                cancelPrompt();
-            }
-        }
-        
-        function disconnect() {
-            currentAccount = null;
-            currentProvider = null;
-            viemClients = { public: null, wallet: null };
-            
-            const div = document.getElementById('walletDiv');
-            div.innerHTML = '<button class="wallet-btn" onclick="promptConnect()">CONNECT WALLET</button>';
-            
-            document.getElementById('status').textContent = 'Disconnected';
-            document.getElementById('status').className = 'status';
-            
-            document.getElementById('btnMint').disabled = true;
-            document.getElementById('btnMintGasKiller').disabled = true;
-            document.getElementById('btnStep').disabled = true;
-            document.getElementById('btnGasKiller').disabled = true;
-            
-            document.getElementById('walletStepBalance').textContent = '-';
-            document.getElementById('depositedStepBalance').textContent = '-';
-            document.getElementById('stepAllowanceDisplay').textContent = '-';
-            
-            onContractInput();
-        }
-        
+
         function getCell(b, x, y) {
             const idx = y * W + x;
             return (b[idx >> 8] >> BigInt(idx & 255)) & 1n;
         }
-        
+
         function setCell(b, x, y) {
             const idx = y * W + x;
             b[idx >> 8] |= 1n << BigInt(idx & 255);
         }
-        
-        function stepLocal() {
-            const next = new Array(WORDS).fill(0n);
+
+        function renderGrid() {
+            const container = els.gridCanvas;
+            container.innerHTML = '';
+            container.style.gridTemplateColumns = `repeat(${W}, 1fr)`;
+            container.style.gridTemplateRows = `repeat(${H}, 1fr)`;
+            
+            const fragment = document.createDocumentFragment();
             for (let y = 0; y < H; y++) {
                 for (let x = 0; x < W; x++) {
-                    let neighbors = 0;
-                    for (let dy = -1; dy <= 1; dy++) {
-                        for (let dx = -1; dx <= 1; dx++) {
-                            if (dx === 0 && dy === 0) continue;
-                            const nx = (x + dx + W) % W;
-                            const ny = (y + dy + H) % H;
-                            neighbors += Number(getCell(board, nx, ny));
-                        }
-                    }
-                    const alive = getCell(board, x, y) === 1n;
-                    if (alive ? (neighbors === 2 || neighbors === 3) : (neighbors === 3)) {
-                        setCell(next, x, y);
-                    }
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    if (getCell(board, x, y) === 1n) cell.classList.add('alive');
+                    fragment.appendChild(cell);
                 }
             }
-            board = next;
-            generation++;
-            draw();
-            updateStats();
+            container.appendChild(fragment);
         }
-        
-        function resetToOnchain() {
-            if (onchainBoard) {
-                board = [...onchainBoard];
-                generation = onchainGeneration;
-                draw();
-                updateStats();
-                document.getElementById('status').textContent = 'Reset to onchain state';
-                document.getElementById('status').className = 'status';
-            }
-        }
-        
-        function draw() {
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00ff41';
-            for (let y = 0; y < H; y++) {
-                for (let x = 0; x < W; x++) {
-                    if (getCell(board, x, y) === 1n) {
-                        ctx.fillRect(x * CS, y * CS, CS - 0.5, CS - 0.5);
-                    }
-                }
-            }
-        }
-        
-        function updateStats() {
-            document.getElementById('genDisplay').textContent = generation;
-            document.getElementById('tokenIdDisplay').textContent = currentTokenId !== null ? '#' + currentTokenId : '-';
+
+        function updateAliveCount() {
             let live = 0;
             for (let y = 0; y < H; y++) {
                 for (let x = 0; x < W; x++) {
                     if (getCell(board, x, y) === 1n) live++;
                 }
             }
-            document.getElementById('liveDisplay').textContent = live;
-            document.getElementById('tokenLive').textContent = live;
+            els.aliveCount.textContent = live;
         }
-        
-        function toggleAutoStep() {
-            if (isAutoStepping) {
-                stopAutoStep();
+
+        function previewEvolution(steps = 1) {
+            if (!board) return;
+            let current = [...board];
+            
+            for (let s = 0; s < steps; s++) {
+                const next = new Array(WORDS).fill(0n);
+                for (let y = 0; y < H; y++) {
+                    for (let x = 0; x < W; x++) {
+                        let neighbors = 0;
+                        for (let dy = -1; dy <= 1; dy++) {
+                            for (let dx = -1; dx <= 1; dx++) {
+                                if (dx === 0 && dy === 0) continue;
+                                const nx = (x + dx + W) % W;
+                                const ny = (y + dy + H) % H;
+                                neighbors += Number(getCell(current, nx, ny));
+                            }
+                        }
+                        const alive = getCell(current, x, y) === 1n;
+                        if (alive ? (neighbors === 2 || neighbors === 3) : (neighbors === 3)) {
+                            setCell(next, x, y);
+                        }
+                    }
+                }
+                current = next;
+            }
+            board = current;
+            generation += steps;
+            els.generation.textContent = generation;
+            renderGrid();
+            updateAliveCount();
+        }
+
+        function stepOnce() {
+            stopPlayback();
+            previewEvolution(1);
+        }
+
+        function togglePlayStop() {
+            if (isPlaying) {
+                stopPlayback();
             } else {
-                startAutoStep();
+                startPlayback();
             }
         }
 
-        function startAutoStep() {
-            if (isAutoStepping) return;
-            isAutoStepping = true;
-            document.getElementById('btnAuto').textContent = 'STOP';
-            document.getElementById('btnAuto').style.borderColor = '#ff0040';
-            document.getElementById('btnAuto').style.color = '#ff0040';
-            stepLocal();
-            autoStepInterval = setInterval(() => stepLocal(), AUTO_STEP_DELAY);
+        function startPlayback() { 
+            if (isPlaying || !board) return; 
+            isPlaying = true; 
+            els.playStopBtn.textContent = 'STOP';
+            els.playStopBtn.classList.remove('btn-green');
+            els.playStopBtn.classList.add('btn-pink');
+            els.stepBtn.disabled = true;
+            playInterval = setInterval(() => previewEvolution(1), 150); 
+        }
+        
+        function stopPlayback() { 
+            isPlaying = false; 
+            els.playStopBtn.textContent = 'PLAY';
+            els.playStopBtn.classList.remove('btn-pink');
+            els.playStopBtn.classList.add('btn-green');
+            els.stepBtn.disabled = false;
+            if (playInterval) { clearInterval(playInterval); playInterval = null; }
         }
 
-        function stopAutoStep() {
-            if (!isAutoStepping) return;
-            isAutoStepping = false;
-            clearInterval(autoStepInterval);
-            autoStepInterval = null;
-            document.getElementById('btnAuto').textContent = 'PLAY';
-            document.getElementById('btnAuto').style.borderColor = '#00ff41';
-            document.getElementById('btnAuto').style.color = '#00ff41';
+        async function evolveOnChain() {
+            if (!currentAccount || !currentTokenId) { 
+                updateStatus('Connect & enter token ID', 'error'); 
+                return; 
+            }
+            const steps = parseInt(els.stepInput.value) || 1;
+            if (steps < 1 || steps > 255) { 
+                updateStatus('Steps: 1-255', 'error'); 
+                return; 
+            }
+            try {
+                els.evolveBtn.disabled = true;
+                const hash = await walletClient.writeContract({ 
+                    address: ONCHAINLIFE_ADDRESS, 
+                    abi: ONCHAINLIFE_ABI, 
+                    functionName: 'step', 
+                    args: [BigInt(currentTokenId), steps], 
+                    account: currentAccount 
+                });
+                updateStatus('Evolving...', 'info');
+                const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                if (receipt.status === 'success') {
+                    updateStatus('Evolved!', 'success');
+                    await loadToken();
+                    await updateTokenBalances();
+                } else updateStatus('Evolve failed', 'error');
+            } catch (e) { 
+                updateStatus('Evolve error', 'error'); 
+                console.error(e);
+            }
+            finally { els.evolveBtn.disabled = false; }
         }
-        
-        function clearGrid() {
-            board = new Array(WORDS).fill(0n);
-            generation = 0;
-            draw();
-            updateStats();
+
+        async function mintToken() {
+            if (!currentAccount) { 
+                updateStatus('Connect wallet', 'error'); 
+                return; 
+            }
+            try {
+                els.mintBtn.disabled = true;
+                const hash = await walletClient.writeContract({ 
+                    address: ONCHAINLIFE_ADDRESS, 
+                    abi: ONCHAINLIFE_ABI, 
+                    functionName: 'mint', 
+                    value: parseEther(MINT_PRICE), 
+                    account: currentAccount 
+                });
+                updateStatus('Minting...', 'info');
+                const receipt = await publicClient.waitForTransactionReceipt({ hash });
+                if (receipt.status === 'success') { 
+                    updateStatus('Minted!', 'success'); 
+                    const tokenId = parseInt(receipt.logs[0].topics[3], 16);
+                    els.tokenInput.value = tokenId;
+                    await loadToken();
+                } else updateStatus('Mint failed', 'error');
+            } catch (e) { 
+                updateStatus('Mint error', 'error'); 
+                console.error(e);
+            }
+            finally { els.mintBtn.disabled = false; }
         }
-        
-        canvas.addEventListener('click', (e) => {
-            if (isAutoStepping) stopAutoStep();
-            const rect = canvas.getBoundingClientRect();
-            const x = Math.floor((e.clientX - rect.left) / CS);
-            const y = Math.floor((e.clientY - rect.top) / CS);
-            if (x >= 0 && x < W && y >= 0 && y < H) {
-                const idx = y * W + x;
-                if (getCell(board, x, y) === 1n) {
-                    board[idx >> 8] &= ~(1n << BigInt(idx & 255));
-                } else {
-                    setCell(board, x, y);
+
+        async function handleInsert() {
+            if (!currentAccount) { updateStatus('Connect wallet', 'error'); return; }
+            const amount = els.coinAmount.value;
+            if (!amount || parseFloat(amount) <= 0) { updateStatus('Enter amount', 'error'); return; }
+            
+            const amountWei = parseEther(amount);
+            
+            try {
+                els.insertBtn.disabled = true;
+                els.insertBtn.textContent = 'CHECKING...';
+                
+                const allowance = await publicClient.readContract({
+                    address: STEP_TOKEN_ADDRESS,
+                    abi: ERC20_ABI,
+                    functionName: 'allowance',
+                    args: [currentAccount, ONCHAINLIFE_ADDRESS]
+                });
+                
+                if (allowance < amountWei) {
+                    els.insertBtn.textContent = 'APPROVING...';
+                    const approveHash = await walletClient.writeContract({
+                        address: STEP_TOKEN_ADDRESS,
+                        abi: ERC20_ABI,
+                        functionName: 'approve',
+                        args: [ONCHAINLIFE_ADDRESS, parseEther('1000000')],
+                        account: currentAccount
+                    });
+                    updateStatus('Approving STEP...', 'info');
+                    await publicClient.waitForTransactionReceipt({ hash: approveHash });
+                    updateStatus('Approved, depositing...', 'info');
                 }
-                draw();
-                updateStats();
+                
+                els.insertBtn.textContent = 'DEPOSITING...';
+                const hash = await walletClient.writeContract({ 
+                    address: ONCHAINLIFE_ADDRESS, 
+                    abi: ONCHAINLIFE_ABI, 
+                    functionName: 'depositStep', 
+                    args: [amountWei], 
+                    account: currentAccount 
+                });
+                await publicClient.waitForTransactionReceipt({ hash });
+                updateStatus('Deposited!', 'success');
+                await updateTokenBalances();
+            } catch (e) { 
+                updateStatus('Deposit failed', 'error'); 
+                console.error(e);
+            }
+            finally { 
+                els.insertBtn.disabled = false; 
+                els.insertBtn.textContent = 'INSERT';
+            }
+        }
+
+        async function handleRefund() {
+            if (!currentAccount) { updateStatus('Connect wallet', 'error'); return; }
+            const amount = els.coinAmount.value;
+            if (!amount || parseFloat(amount) <= 0) { updateStatus('Enter amount', 'error'); return; }
+            
+            try {
+                els.refundBtn.disabled = true;
+                const hash = await walletClient.writeContract({ 
+                    address: ONCHAINLIFE_ADDRESS, 
+                    abi: ONCHAINLIFE_ABI, 
+                    functionName: 'withdrawStep', 
+                    args: [parseEther(amount)], 
+                    account: currentAccount 
+                });
+                await publicClient.waitForTransactionReceipt({ hash });
+                updateStatus('Withdrawn!', 'success');
+                await updateTokenBalances();
+            } catch (e) { 
+                updateStatus('Withdraw failed', 'error'); 
+                console.error(e);
+            }
+            finally { 
+                els.refundBtn.disabled = false; 
+            }
+        }
+
+        function updateStatus(msg, type) {
+            els.status.textContent = msg;
+            els.status.className = `controls-status ${type}`;
+        }
+
+        // Copy to clipboard function
+        async function copyToClipboard(text, element) {
+            try {
+                await navigator.clipboard.writeText(text);
+                const originalText = element.textContent;
+                const originalColor = element.style.color;
+                element.textContent = 'COPIED!';
+                element.style.color = 'var(--neon-green)';
+                setTimeout(() => {
+                    element.textContent = originalText;
+                    element.style.color = originalColor;
+                }, 1000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+            }
+        }
+
+        els.connectBtn.addEventListener('click', () => currentAccount ? disconnectWallet() : connectWallet());
+        els.mintBtn.addEventListener('click', mintToken);
+        els.loadTokenBtn.addEventListener('click', loadToken);
+        els.tokenInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') loadToken(); });
+        els.evolveBtn.addEventListener('click', evolveOnChain);
+        els.playStopBtn.addEventListener('click', togglePlayStop);
+        els.stepBtn.addEventListener('click', stepOnce);
+        els.resetBtn.addEventListener('click', () => {
+            if (onchainBoard) {
+                board = [...onchainBoard];
+                generation = onchainGeneration;
+                els.generation.textContent = generation;
+                renderGrid();
+                updateAliveCount();
+                updateStatus('Reset to onchain state', 'info');
             }
         });
+        els.insertBtn.addEventListener('click', handleInsert);
+        els.refundBtn.addEventListener('click', handleRefund);
+
+        // Add click handlers for contract addresses
+        document.addEventListener('DOMContentLoaded', () => {
+            const walletAddressEl = document.getElementById('walletAddress');
+            const onchainLifeAddressEl = document.getElementById('onchainLifeAddress');
+            const stepTokenAddressEl = document.getElementById('stepTokenAddress');
+            
+            if (walletAddressEl) {
+                walletAddressEl.addEventListener('click', () => {
+                    if (currentAccount) copyToClipboard(currentAccount, walletAddressEl);
+                });
+            }
+            
+            if (onchainLifeAddressEl) {
+                onchainLifeAddressEl.addEventListener('click', () => {
+                    copyToClipboard(ONCHAINLIFE_ADDRESS, onchainLifeAddressEl);
+                });
+            }
+            
+            if (stepTokenAddressEl) {
+                stepTokenAddressEl.addEventListener('click', () => {
+                    copyToClipboard(STEP_TOKEN_ADDRESS, stepTokenAddressEl);
+                });
+            }
+        });
+
+        initPublicClient();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --neon-pink: #ff2a6d; --neon-cyan: #05d9e8; --neon-green: #00ff9f; --neon-yellow: #ffd700; --neon-orange: #ff6b35;
+            --dark-bg: #0a0a0f; --panel-bg: #111118; --text-bright: #fff; --text-dim: #aaccff;
+        }
+        html, body {
+            min-height: 100%;
+            font-family: 'Share Tech Mono', monospace; 
+            background: var(--dark-bg); 
+            color: var(--text-bright);
+            font-size: 12px;
+        }
+        body {
+            padding: 8px;
+        }
+        .arcade-machine {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            background: linear-gradient(180deg, #1a1a24 0%, #0d0d12 100%);
+            border: 2px solid var(--neon-cyan); 
+            border-radius: 16px; 
+            padding: 12px;
+            box-shadow: 0 0 30px rgba(5,217,232,0.15), inset 0 0 60px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        .marquee {
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan)); 
+            padding: 10px; 
+            border-radius: 10px;
+            margin-bottom: 10px; 
+            text-align: center; 
+            box-shadow: 0 0 20px rgba(255,42,109,0.4);
+            flex-shrink: 0;
+        }
+        .marquee h1 { font-family: 'Press Start 2P'; font-size: clamp(14px, 2vw, 18px); color: #000; text-shadow: 2px 2px 0 rgba(255,255,255,0.4); letter-spacing: 2px; }
+
+        /* Status message - now below new game section */
+        .controls-status {
+            background: #000; 
+            border: 3px solid #333; 
+            border-radius: 10px; 
+            padding: 16px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: clamp(11px, 1.3vw, 13px);
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,0,0.15);
+            font-family: 'Press Start 2P';
+            line-height: 1.6;
+        }
+        .controls-status::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%); 
+            background-size: 100% 4px;
+            pointer-events: none; 
+            z-index: 1;
+            border-radius: 7px;
+        }
+        .controls-status.info { 
+            color: var(--neon-green); 
+            border-color: #333;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        .controls-status.success { 
+            color: var(--neon-green); 
+            border-color: var(--neon-green);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,0,0.3);
+        }
+        .controls-status.error { 
+            color: var(--neon-pink); 
+            border-color: var(--neon-pink);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 0 20px rgba(255,42,109,0.3);
+        }
+
+        .mint-section {
+            background: linear-gradient(135deg, #1a1510 0%, #0d0a08 100%); 
+            border: 2px solid var(--neon-green);
+            border-radius: 10px; 
+            padding: 10px; 
+            text-align: center; 
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .mint-section h3 { font-family: 'Press Start 2P'; font-size: clamp(10px, 1.5vw, 12px); color: var(--neon-green); margin-bottom: 10px; }
         
-        window.promptConnect = promptConnect;
-        window.cancelPrompt = cancelPrompt;
-        window.doConnect = doConnect;
-        window.disconnect = disconnect;
-        window.switchChain = switchChain;
-        window.onContractInput = onContractInput;
-        window.onTokenInput = onTokenInput;
-        window.estimateMintGas = estimateMintGas;
-        window.estimateStepGas = estimateStepGas;
-        window.approveStepToken = approveStepToken;
-        window.depositStepToken = depositStepToken;
-        window.withdrawStepToken = withdrawStepToken;
-        window.mintNFT = mintNFT;
-        window.mintGasKiller = mintGasKiller;
-        window.loadToken = loadToken;
-        window.stepContract = stepContract;
-        window.stepGasKiller = stepGasKiller;
-        window.stepLocal = stepLocal;
-        window.toggleAutoStep = toggleAutoStep;
-        window.resetToOnchain = resetToOnchain;
-        window.updateStepCost = updateStepCost;
+        .mint-btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        #connectBtn {
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(10px, 1.5vw, 12px); 
+            padding: 12px 28px;
+            background: linear-gradient(180deg, #d00 0%, #800 100%); 
+            border: 2px solid #f66;
+            border-radius: 8px; 
+            color: #fff; 
+            cursor: pointer;
+            box-shadow: 0 4px 0 #400, 0 0 15px rgba(255,0,0,0.4); 
+            transition: all 0.1s;
+        }
+        #connectBtn:hover { transform: translateY(2px); box-shadow: 0 2px 0 #400, 0 0 20px rgba(255,0,0,0.6); }
+        #connectBtn:active { transform: translateY(4px); box-shadow: 0 0 0 #400; }
+        #connectBtn.connected { 
+            background: linear-gradient(180deg, #0a0 0%, #060 100%); 
+            border-color: #6f6; 
+            box-shadow: 0 4px 0 #040, 0 0 15px rgba(0,255,0,0.4); 
+        }
+        #connectBtn.disconnect-btn {
+            background: linear-gradient(180deg, #c00 0%, #800 100%);
+            border-color: #f66;
+            box-shadow: 0 4px 0 #400, 0 0 15px rgba(255,0,0,0.4);
+            font-size: 16px;
+        }
+        
+        #mintBtn {
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(10px, 1.5vw, 12px); 
+            padding: 12px 28px;
+            background: linear-gradient(180deg, #0d0 0%, #090 100%); 
+            border: 2px solid #6f6;
+            border-radius: 8px; 
+            color: #000; 
+            cursor: pointer; 
+            font-weight: bold;
+            box-shadow: 0 4px 0 #050, 0 0 20px rgba(0,255,0,0.4); 
+            transition: all 0.1s;
+        }
+        #mintBtn:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #050, 0 0 30px rgba(0,255,0,0.6); }
+        #mintBtn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #050; }
+        #mintBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .screen-area { 
+            display: grid; 
+            grid-template-columns: 1fr 280px; 
+            gap: 12px; 
+            margin-bottom: 10px;
+            min-height: 500px;
+        }
+
+        .crt-container {
+            background: #000; 
+            border: 3px solid #333; 
+            border-radius: 10px; 
+            padding: 10px;
+            position: relative; 
+            box-shadow: inset 0 0 80px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,0,0.15);
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .crt-container::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0;
+            background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%); 
+            background-size: 100% 4px;
+            pointer-events: none; 
+            z-index: 10;
+        }
+        .crt-screen {
+            flex: 1;
+            display: grid; 
+            gap: 1px;
+            background: #000800; 
+            padding: 6px; 
+            border-radius: 4px;
+            aspect-ratio: 1 / 1;
+            max-height: 100%;
+            margin: 0 auto;
+            width: auto;
+            height: 100%;
+        }
+        .cell { 
+            background: #0a180a; 
+            border-radius: 1px; 
+            transition: background 0.1s;
+            aspect-ratio: 1 / 1;
+            min-width: 0;
+            min-height: 0;
+        }
+        .cell.alive { 
+            background: var(--neon-green); 
+            box-shadow: 0 0 4px var(--neon-green); 
+        }
+
+        .side-panel { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px;
+            min-height: 0;
+            overflow: hidden;
+        }
+        /* Token ID section - blue border */
+        .panel-box {
+            background: var(--panel-bg); 
+            border: 2px solid var(--neon-cyan); 
+            border-radius: 10px;
+            padding: 14px; 
+            box-shadow: 0 0 15px rgba(5,217,232,0.15);
+            flex-shrink: 0;
+        }
+        .panel-box h3 { 
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(9px, 1.2vw, 11px); 
+            color: var(--neon-cyan); 
+            margin-bottom: 12px; 
+            text-transform: uppercase; 
+        }
+        
+        .token-input-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        #tokenInput { 
+            flex: 1; 
+            background: #1a1a2e; 
+            border: 2px solid var(--neon-cyan); 
+            color: var(--text-bright); 
+            padding: 10px; 
+            font-size: 14px; 
+            border-radius: 6px; 
+            font-family: 'Share Tech Mono', monospace;
+            min-width: 0;
+        }
+        #tokenInput:focus { outline: none; box-shadow: 0 0 10px var(--neon-cyan); }
+        #loadTokenBtn {
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(8px, 1vw, 9px); 
+            padding: 10px 16px;
+            background: linear-gradient(180deg, var(--neon-cyan) 0%, #088 100%); 
+            border: 2px solid #aff;
+            border-radius: 6px; 
+            color: #000; 
+            cursor: pointer; 
+            box-shadow: 0 3px 0 #066, 0 0 10px rgba(0,255,255,0.3);
+            flex-shrink: 0;
+        }
+        #loadTokenBtn:hover { transform: translateY(1px); box-shadow: 0 2px 0 #066, 0 0 15px rgba(0,255,255,0.5); }
+        #loadTokenBtn:active { transform: translateY(3px); box-shadow: 0 0 0 #066; }
+
+        .token-stats { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+        }
+        .stat-box { 
+            background: rgba(0,0,0,0.4); 
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+        .stat-label { 
+            font-size: clamp(8px, 1vw, 9px); 
+            color: var(--neon-cyan); 
+            text-transform: uppercase; 
+            margin-bottom: 4px; 
+        }
+        .stat-value { 
+            font-size: clamp(16px, 2vw, 20px); 
+            color: var(--neon-green); 
+            font-weight: bold;
+        }
+
+        /* Insert coin section - golden/yellow theme */
+        .coin-slot-box {
+            background: linear-gradient(135deg, #2a2010 0%, #1a1508 100%);
+            border: 3px solid var(--neon-yellow); 
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2), inset 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+        .coin-slot-box::before {
+            content: ''; 
+            position: absolute; 
+            top: 4px; 
+            left: 4px; 
+            right: 4px; 
+            bottom: 4px;
+            border: 1px dashed rgba(255,215,0,0.3); 
+            border-radius: 6px; 
+            pointer-events: none;
+        }
+        .coin-slot-header {
+            text-align: center; 
+            margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+        .coin-slot-title {
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(10px, 1.3vw, 12px); 
+            color: var(--neon-yellow);
+            display: block; 
+            margin-bottom: 10px;
+        }
+        .coin-balance-row {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+        }
+        .coin-balance-item { 
+            background: rgba(0,0,0,0.4); 
+            padding: 12px; 
+            border-radius: 8px; 
+            text-align: center; 
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        .coin-balance-item .label { 
+            color: var(--neon-cyan); 
+            font-size: clamp(9px, 1.1vw, 11px); 
+            text-transform: uppercase; 
+            margin-bottom: 5px;
+        }
+        .coin-balance-item .value { 
+            color: var(--neon-green); 
+            font-size: clamp(18px, 2.5vw, 24px); 
+            font-weight: bold;
+        }
+        
+        .coin-input-area {
+            background: rgba(0,0,0,0.4); 
+            border-radius: 8px; 
+            padding: 14px;
+            border: 1px solid rgba(255,215,0,0.3);
+            margin-top: auto;
+            flex-shrink: 0;
+        }
+        #coinAmount, #coinAmountMobile {
+            width: 100%; 
+            background: #1a1a2e; 
+            border: 2px solid var(--neon-yellow);
+            color: var(--text-bright); 
+            padding: 12px; 
+            font-size: 16px; 
+            font-family: 'Share Tech Mono', monospace;
+            border-radius: 6px; 
+            text-align: center; 
+            margin-bottom: 12px;
+        }
+        #coinAmount:focus, #coinAmountMobile:focus { 
+            outline: none; 
+            box-shadow: 0 0 12px var(--neon-yellow); 
+        }
+        
+        .coin-btn-row {
+            display: flex; 
+            gap: 10px;
+            align-items: stretch;
+        }
+        
+        .insert-btn {
+            flex: 1;
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(11px, 1.4vw, 13px); 
+            padding: 14px;
+            background: linear-gradient(180deg, #0c0 0%, #080 100%);
+            border: 2px solid #6f6; 
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #040, 0 0 15px rgba(0,255,0,0.4);
+            transition: all 0.1s;
+        }
+        .insert-btn:hover { 
+            transform: translateY(2px); 
+            box-shadow: 0 2px 0 #040, 0 0 20px rgba(0,255,0,0.6); 
+        }
+        .insert-btn:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0 0 #040; 
+        }
+        .insert-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .refund-btn {
+            width: 44px;
+            min-width: 44px;
+            font-family: 'Press Start 2P'; 
+            font-size: 14px;
+            background: linear-gradient(180deg, #c00 0%, #800 100%);
+            border: 2px solid #f66; 
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #400, 0 0 15px rgba(255,0,0,0.4);
+            transition: all 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .refund-btn:hover { 
+            transform: translateY(2px); 
+            box-shadow: 0 2px 0 #400, 0 0 20px rgba(255,0,0,0.6); 
+        }
+        .refund-btn:active { 
+            transform: translateY(4px); 
+            box-shadow: 0 0 0 #400; 
+        }
+        .refund-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .controls-deck {
+            background: linear-gradient(180deg, #22222e 0%, #151520 100%); 
+            border: 2px solid var(--neon-orange);
+            border-radius: 10px; 
+            padding: 14px; 
+            box-shadow: 0 0 20px rgba(255,107,53,0.15);
+            flex-shrink: 0;
+        }
+        .controls-title { 
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(10px, 1.4vw, 12px); 
+            color: var(--neon-orange); 
+            text-align: center; 
+            margin-bottom: 14px; 
+        }
+        
+        .controls-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+        }
+        
+        .control-section { 
+            background: rgba(0,0,0,0.3); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; 
+            padding: 16px; 
+        }
+        .control-section h4 { 
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(9px, 1.1vw, 11px); 
+            color: var(--neon-yellow); 
+            margin-bottom: 12px; 
+            text-transform: uppercase; 
+        }
+        .button-row { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            margin-bottom: 8px; 
+        }
+        .button-row.full-width {
+            flex-wrap: nowrap;
+        }
+        .button-row.full-width .arcade-btn {
+            flex: 1;
+            min-width: 0;
+            width: 50%;
+        }
+
+        .arcade-btn {
+            font-family: 'Press Start 2P'; 
+            font-size: clamp(10px, 1.3vw, 13px); 
+            padding: clamp(12px, 2vw, 18px) clamp(18px, 3vw, 28px); 
+            border: none; 
+            border-radius: 8px;
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: all 0.1s;
+        }
+        .arcade-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-green {
+            background: linear-gradient(180deg, #0c0 0%, #080 100%); 
+            border: 2px solid #6f6; 
+            color: #fff;
+            box-shadow: 0 4px 0 #040, 0 0 15px rgba(0,255,0,0.3);
+        }
+        .btn-green:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #040, 0 0 20px rgba(0,255,0,0.5); }
+        .btn-green:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #040; }
+        .btn-pink {
+            background: linear-gradient(180deg, #c0c 0%, #808 100%); 
+            border: 2px solid #f6f; 
+            color: #fff;
+            box-shadow: 0 4px 0 #404, 0 0 15px rgba(255,0,255,0.3);
+        }
+        .btn-pink:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #404, 0 0 20px rgba(255,0,255,0.5); }
+        .btn-pink:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #404; }
+        .btn-cyan {
+            background: linear-gradient(180deg, #0cc 0%, #088 100%); 
+            border: 2px solid #6ff; 
+            color: #fff;
+            box-shadow: 0 4px 0 #044, 0 0 15px rgba(0,255,255,0.3);
+        }
+        .btn-cyan:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #044, 0 0 20px rgba(0,255,255,0.5); }
+        .btn-cyan:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #044; }
+        .btn-yellow {
+            background: linear-gradient(180deg, #cc0 0%, #880 100%); 
+            border: 2px solid #ff6; 
+            color: #000;
+            box-shadow: 0 4px 0 #440, 0 0 15px rgba(255,255,0,0.3);
+        }
+        .btn-yellow:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 #440, 0 0 20px rgba(255,255,0,0.5); }
+        .btn-yellow:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 #440; }
+
+        .step-input-group { 
+            display: flex; 
+            gap: 10px; 
+            align-items: stretch;
+        }
+        .step-input-group.full-width {
+            flex-wrap: nowrap;
+        }
+        .step-input-group.full-width #stepInput,
+        .step-input-group.full-width #evolveBtn {
+            flex: 1;
+            min-width: 0;
+            width: 50%;
+        }
+        #stepInput { 
+            width: 60px; 
+            background: #1a1a2e; 
+            border: 2px solid var(--neon-cyan); 
+            color: var(--text-bright); 
+            padding: 10px; 
+            font-size: 14px; 
+            border-radius: 6px; 
+            text-align: center;
+            height: auto;
+            min-height: 48px;
+        }
+        #stepInput:focus { outline: none; box-shadow: 0 0 10px var(--neon-cyan); }
+
+        .text-btn {
+            font-family: 'Share Tech Mono', monospace; 
+            font-size: clamp(10px, 1.2vw, 12px);
+            color: var(--text-dim); 
+            background: none; 
+            border: none;
+            cursor: pointer; 
+            text-decoration: underline; 
+            padding: 4px;
+            transition: color 0.2s;
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .text-btn:hover { color: var(--neon-cyan); }
+
+        .hidden { display: none !important; }
+
+        /* Contract Info Section */
+        .contract-info-section {
+            background: linear-gradient(180deg, #1a1a24 0%, #0d0d12 100%);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+            flex-shrink: 0;
+        }
+        .contract-info-title {
+            font-family: 'Press Start 2P';
+            font-size: clamp(9px, 1.2vw, 11px);
+            color: var(--neon-cyan);
+            text-align: center;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .contract-info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .contract-info-item {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(5,217,232,0.3);
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .contract-info-item:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0,255,159,0.3);
+        }
+        .contract-info-item:active {
+            transform: scale(0.98);
+        }
+        .contract-info-item .label {
+            font-size: clamp(8px, 1vw, 10px);
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .contract-info-item .value {
+            font-size: clamp(10px, 1.2vw, 12px);
+            color: var(--neon-green);
+            font-family: 'Share Tech Mono', monospace;
+        }
+        .contract-info-item .value:hover {
+            color: var(--neon-yellow);
+        }
+
+        /* Footer Styles - Blue theme with reversed colors */
+        .arcade-footer {
+            background: linear-gradient(180deg, #151520 0%, #0a0a0f 100%);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(5,217,232,0.15);
+            flex-shrink: 0;
+        }
+        .arcade-footer-text {
+            font-family: 'Press Start 2P';
+            font-size: clamp(8px, 1vw, 10px);
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px rgba(255,42,109,0.5);
+            letter-spacing: 1px;
+            line-height: 1.8;
+        }
+        .arcade-footer-text span {
+            color: var(--neon-cyan);
+        }
+        
+        .about-section span {
+            color: var(--neon-pink);
+        }
+        
+        .arcade-footer a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .arcade-footer a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        /* Tablet - Move info section below on medium devices too */
+        @media (max-width: 900px) {
+            .screen-area { grid-template-columns: 1fr 220px; }
+            .contract-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Collapse control deck to single column on medium devices */
+            .controls-grid { 
+                grid-template-columns: 1fr; 
+                gap: 10px;
+            }
+            .control-section { 
+                padding: 14px; 
+            }
+            /* Info section moves below */
+            .control-section:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* Mobile - Reordered layout */
+        @media (max-width: 768px) {
+            body {
+                padding: 6px;
+            }
+            .arcade-machine { 
+                padding: 10px; 
+            }
+            
+            /* Reorder sections for mobile */
+            .arcade-machine {
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Status screen after new game section */
+            .controls-status {
+                order: 0;
+            }
+            
+            .screen-area { 
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                min-height: 0;
+                margin-bottom: 0;
+            }
+            
+            /* Token ID first */
+            .side-panel {
+                order: 1;
+                width: 100%;
+                flex-direction: row;
+                gap: 10px;
+                flex: none;
+                min-height: auto;
+            }
+            
+            /* Screen second */
+            .crt-container { 
+                order: 2;
+                aspect-ratio: 1 / 1;
+                height: auto;
+                min-height: 350px;
+                flex: none;
+            }
+            
+            /* Control deck third */
+            .controls-deck {
+                order: 3;
+                margin-top: 10px;
+            }
+            
+            /* Mobile coin slot fourth */
+            .coin-slot-box.mobile-only {
+                order: 4;
+                display: flex;
+                margin-top: 10px;
+            }
+            
+            /* Contract info fifth */
+            .contract-info-section {
+                order: 5;
+            }
+            
+            .about-section {
+                order: 6;
+            }
+            
+            /* Footer sixth */
+            .arcade-footer {
+                order: 7;
+            }
+            
+            /* Hide desktop coin slot on mobile */
+            .side-panel .coin-slot-box.desktop-only {
+                display: none !important;
+            }
+            
+            .panel-box { 
+                flex: 1;
+                min-height: auto;
+            }
+            
+            .coin-slot-box {
+                flex: none;
+                min-height: auto;
+                padding: 10px;
+            }
+            .coin-slot-header {
+                margin-bottom: 10px;
+            }
+            .coin-balance-row {
+                gap: 8px;
+            }
+            .coin-input-area {
+                padding: 10px;
+                margin-top: 8px;
+            }
+            #coinAmount, #coinAmountMobile {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .insert-btn, .refund-btn {
+                padding: 12px;
+            }
+
+            .control-section:first-child .button-row {
+                flex-direction: row;
+                flex-wrap: nowrap;
+            }
+            .control-section:first-child .arcade-btn {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .contract-info-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .contract-info-item {
+                padding: 8px;
+            }
+
+            .arcade-footer {
+                padding: 12px;
+            }
+            .arcade-footer-text {
+                font-size: clamp(7px, 0.9vw, 9px);
+                line-height: 1.6;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .mint-btn-row {
+                flex-direction: column;
+                width: 100%;
+            }
+            #connectBtn, #mintBtn {
+                width: 100%;
+            }
+            
+            .side-panel {
+                flex-direction: column;
+            }
+            
+            .controls-grid { 
+                grid-template-columns: 1fr; 
+                gap: 8px;
+            }
+            .control-section { padding: 12px; }
+            .arcade-btn { width: 100%; }
+            .button-row { flex-direction: row; }
+            .button-row.full-width .arcade-btn {
+                width: 50%;
+            }
+            .step-input-group { 
+                justify-content: center;
+                flex-wrap: nowrap;
+            }
+            .step-input-group.full-width #stepInput,
+            .step-input-group.full-width #evolveBtn {
+                width: 50%;
+            }
+            
+            .crt-container {
+                min-height: 300px;
+            }
+
+            .contract-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .arcade-footer-text {
+                font-size: 7px;
+                line-height: 1.5;
+            }
+        }
+        
+        /* Desktop - hide mobile coin slot */
+        @media (min-width: 769px) {
+            .coin-slot-box.mobile-only {
+                display: none !important;
+            }
+        }
+        
+        .cyber-header {
+            background: transparent;
+            border-bottom: 2px solid var(--neon-cyan);
+            padding: 24px 20px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .scanline-wrapper {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .scanline-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), var(--neon-cyan), transparent);
+            animation: scan 1s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .cyber-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .player-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Press Start 2P';
+            font-size: 11px;
+        }
+
+        .player-label { color: var(--neon-cyan); }
+        .player-status {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .cyber-title {
+            font-family: 'Press Start 2P';
+            font-size: clamp(16px, 3vw, 24px);
+            color: #fff;
+            letter-spacing: 6px;
+            text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-cyan);
+            animation: glitch 4s infinite;
+        }
+
+        @keyframes glitch {
+            0%, 90%, 100% { text-shadow: 2px 0 var(--neon-pink), -2px 0 var(--neon-cyan); transform: translate(0); }
+            91% { text-shadow: -2px 0 var(--neon-pink), 2px 0 var(--neon-cyan); transform: translate(1px, -1px); }
+            92% { text-shadow: 2px 0 var(--neon-cyan), -2px 0 var(--neon-pink); transform: translate(-1px, 1px); }
+            93% { text-shadow: -2px 0 var(--neon-cyan), 2px 0 var(--neon-pink); transform: translate(0); }
+        }
+
+        .coin-section {
+            font-family: 'Press Start 2P';
+            font-size: 11px;
+            color: var(--neon-yellow);
+            animation: blink 1s step-end infinite;
+            text-shadow: 0 0 10px var(--neon-yellow);
+        }
+        
+        .about-section {
+            background: linear-gradient(180deg, #1a1a24 0%, #0d0d12 100%);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+            flex-shrink: 0;     
+        }
+
+        .about-title {
+            font-family: 'Press Start 2P';
+            font-size: clamp(9px, 1.2vw, 11px);
+            color: var(--neon-cyan);
+            text-align: center;
+            margin-bottom: 12px;
+            text-transform: uppercase;     
+        }
+
+        @media (max-width: 768px) {
+            .cyber-header-content { flex-direction: column; gap: 16px; }
+            .cyber-title { font-size: 14px; letter-spacing: 3px; }
+            .player-section, .coin-section { font-size: 9px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="arcade-machine">
+        <header class="cyber-header">
+            <div class="scanline-wrapper">
+                <div class="scanline-bar"></div>
+            </div>
+            <div class="cyber-header-content">
+                <div class="player-section">
+                    <span class="player-label">PLAYER 1</span>
+                    <span class="player-status">READY</span>
+                </div>
+                <div class="title-section">
+                    <h1 class="cyber-title">ONCHAIN LIFE</h1>
+                </div>
+                <div class="coin-section">INSERT COIN</div>
+            </div>
+        </header>
+
+        <div class="mint-section">
+            <h3>✦ NEW GAME ✦</h3>
+            <div class="mint-btn-row">
+                <button id="connectBtn">START</button>
+                <button id="mintBtn">MINT 0.007 ETH</button>
+            </div>
+        </div>
+
+        <!-- Status message -->
+        <div id="status" class="controls-status info">Connect wallet to begin</div>
+
+        <div class="screen-area">
+            <div class="crt-container">
+                <div id="gridCanvas" class="crt-screen">
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--neon-green);font-family:'Press Start 2P';font-size:16px;text-align:center;line-height:2;text-shadow:0 0 20px var(--neon-green);">
+                        <div>CONNECT WALLET</div>
+                        <div style="margin-top:24px;">ENTER TOKEN ID</div>
+                    </div>
+                </div>
+            </div>
+            <div class="side-panel">
+                <!-- Token ID section -->
+                <div class="panel-box">
+                    <h3>► TOKEN ID</h3>
+                    <div class="token-input-row">
+                        <input type="number" id="tokenInput" placeholder="0" min="0" value="0">
+                        <button id="loadTokenBtn">LOAD</button>
+                    </div>
+                    <!-- Always visible token info -->
+                    <div id="tokenInfo">
+                        <div class="token-stats">
+                            <div class="stat-box"><div class="stat-label">GEN</div><div class="stat-value" id="generation">-</div></div>
+                            <div class="stat-box"><div class="stat-label">ALIVE</div><div class="stat-value" id="aliveCount">-</div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop only coin slot - golden theme -->
+                <div class="coin-slot-box desktop-only">
+                    <div class="coin-slot-header">
+                        <span class="coin-slot-title">INSERT STEP COIN</span>
+                        <div class="coin-balance-row">
+                            <div class="coin-balance-item"><div class="label">Wallet</div><div class="value" id="walletStepBalance">-</div></div>
+                            <div class="coin-balance-item"><div class="label">Bank</div><div class="value" id="contractStepBalance">-</div></div>
+                        </div>
+                    </div>
+                    <div class="coin-input-area">
+                        <input type="number" id="coinAmount" placeholder="0.00" step="0.01" value="1">
+                        <div class="coin-btn-row">
+                            <button id="insertBtn" class="insert-btn">INSERT</button>
+                            <button id="refundBtn" class="refund-btn" title="Refund">↩</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-deck">
+            <div class="controls-title">◄ CONTROL DECK ►</div>
+            
+            <div class="controls-grid">
+                <div class="control-section">
+                    <h4>► Preview</h4>
+                    <div class="button-row full-width">
+                        <button id="playStopBtn" class="arcade-btn btn-green">PLAY</button>
+                        <button id="stepBtn" class="arcade-btn btn-yellow">STEP</button>
+                    </div>
+                    <button id="resetBtn" class="text-btn">RESET</button>
+                </div>
+                <div class="control-section">
+                    <h4>► Onchain</h4>
+                    <div class="step-input-group full-width">
+                        <input type="number" id="stepInput" value="1" min="1" max="255">
+                        <button id="evolveBtn" class="arcade-btn btn-cyan">EVOLVE</button>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <h4>► Info</h4>
+                    <div style="color:var(--text-dim);font-size:11px;line-height:1.6;">
+                        PLAY to animate preview.<br>
+                        STEP advances one generation.<br>
+                        EVOLVE writes to blockchain. (COST: 1 STEP)<br>
+                        RESET returns to onchain state
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile only coin slot - golden theme -->
+        <div class="coin-slot-box mobile-only">
+            <div class="coin-slot-header">
+                <span class="coin-slot-title">INSERT STEP COIN</span>
+                <div class="coin-balance-row">
+                    <div class="coin-balance-item"><div class="label">Wallet</div><div class="value" id="walletStepBalanceMobile">-</div></div>
+                    <div class="coin-balance-item"><div class="label">Bank</div><div class="value" id="contractStepBalanceMobile">-</div></div>
+                </div>
+            </div>
+            <div class="coin-input-area">
+                <input type="number" id="coinAmountMobile" placeholder="0.00" step="0.01" value="1">
+                <div class="coin-btn-row">
+                    <button id="insertBtnMobile" class="insert-btn">INSERT</button>
+                    <button id="refundBtnMobile" class="refund-btn" title="Refund">↩</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="contract-info-section">
+            <div class="contract-info-title">◄ CONTRACT INFO ►</div>
+            <div class="contract-info-grid">
+                <div class="contract-info-item">
+                    <div class="label">Wallet</div>
+                    <div class="value" id="walletAddress" title="Click to copy">---</div>
+                </div>
+                <div class="contract-info-item">
+                    <div class="label">Chain</div>
+                    <div class="value" id="walletNetwork">---</div>
+                </div>
+                <div class="contract-info-item">
+                    <div class="label">OnchainLife</div>
+                    <div class="value" id="onchainLifeAddress" title="Click to copy">---</div>
+                </div>
+                <div class="contract-info-item">
+                    <div class="label">Step Token</div>
+                    <div class="value" id="stepTokenAddress" title="Click to copy">---</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ABOUT -->
+       <div class="about-section">
+          <div class="about-title">◄ ABOUT ONCHAIN LIFE ►</div>   
+          <div style="color:var(--text-dim);font-size:16px;line-height:1.6;">
+              <span>ONCHAIN LIFE</span> is a virtual arcade machine to visualize and interact with the <span>ONCHAIN LIFE NFT</span> collection.</br>
+              Every <span>NFT</span> is a pure random <span>CONWAY'S GAME OF LIFE</span> toroidal grid of 64x64 <span>BLOCKS.</span></br>
+              Every <span>BOARD</span> can be evolved with the <span>ARCADE MACHINE.</span> It will require <span>1 STEP COIN</span> per step.</br>
+              The <span>TOP EVOLVED NFTS</span> at the snapshot time will qualify for the <span>PHASE 1 AIRDROP.</span>
+          </div>           
+       </div>
+
+        <!-- FOOTER -->
+       <div class="arcade-footer">
+          <div class="arcade-footer-text">
+              POWERED BY <a href="https://gaskiller.xyz/" target="_blank"><span>GAS-KILLER</span></a> // 
+              BUILT ON <a href="https://ethereum.org/" target="_blank"><span>ETHEREUM</span></a> // 
+              BY <a href="https://farcaster.xyz/jvaleska.eth" target="_blank"><span>J.VALESKA</span></a>
+          </div>
+       </div>
+    </div>
+
+    <script>
+        // Sync mobile coin slot with desktop
+        document.addEventListener('DOMContentLoaded', () => {
+            const desktopWallet = document.getElementById('walletStepBalance');
+            const desktopBank = document.getElementById('contractStepBalance');
+            const mobileWallet = document.getElementById('walletStepBalanceMobile');
+            const mobileBank = document.getElementById('contractStepBalanceMobile');
+            const desktopAmount = document.getElementById('coinAmount');
+            const mobileAmount = document.getElementById('coinAmountMobile');
+            
+            // Sync values
+            if (desktopWallet && mobileWallet) {
+                const observer = new MutationObserver(() => {
+                    mobileWallet.textContent = desktopWallet.textContent;
+                });
+                observer.observe(desktopWallet, { childList: true, characterData: true, subtree: true });
+            }
+            
+            if (desktopBank && mobileBank) {
+                const observer = new MutationObserver(() => {
+                    mobileBank.textContent = desktopBank.textContent;
+                });
+                observer.observe(desktopBank, { childList: true, characterData: true, subtree: true });
+            }
+            
+            // Sync inputs
+            if (desktopAmount && mobileAmount) {
+                desktopAmount.addEventListener('input', () => {
+                    mobileAmount.value = desktopAmount.value;
+                });
+                mobileAmount.addEventListener('input', () => {
+                    desktopAmount.value = mobileAmount.value;
+                });
+            }
+            
+            // Wire up mobile buttons
+            const insertBtnMobile = document.getElementById('insertBtnMobile');
+            const refundBtnMobile = document.getElementById('refundBtnMobile');
+            const insertBtn = document.getElementById('insertBtn');
+            const refundBtn = document.getElementById('refundBtn');
+            
+            if (insertBtnMobile && insertBtn) {
+                insertBtnMobile.addEventListener('click', () => insertBtn.click());
+            }
+            if (refundBtnMobile && refundBtn) {
+                refundBtnMobile.addEventListener('click', () => refundBtn.click());
+            }
+        });
     </script>
 </body>
 </html>
